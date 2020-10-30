@@ -14,8 +14,18 @@ B = np.random.randint(1,10+1, size = (1,10))
 def GaussianElim(A,B):
     A = np.insert(A,np.shape(A)[0],B,1)
     for k in range(0, np.shape(A)[0]):
+        Amax = A[k][k]
+        for i in range(k+1,np.shape(A)[0]):
+            if A[i][k] > Amax:
+                A[[i,k],:] = A[[k,i],:]
         for i in range(k+1,np.shape(A)[0]):
             for j in range(np.shape(A)[1]):
                 A[i][j] = A[i][j] - A[i][k]/(A[k][k])*A[k][j]
     return(A)
 ELIMINATED_A = GaussianElim(A,B)
+#%%
+x = np.zeros(np.shape(A)[0])
+xN = ELIMINATED_A[np.shape(A)[0]-1,np.shape(ELIMINATED_A)[0]]/(ELIMINATED_A[np.shape(A)[0]-1,np.shape(A)[0]-1])
+#%%
+for i in np.arange(np.shape(A)[0], 0, -1):
+    x = 1/A[i,i]*(ELIMINATED_A[2,np.shape(ELIMINATED_A)[0]] - )
