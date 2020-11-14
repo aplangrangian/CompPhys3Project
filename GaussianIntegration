@@ -8,13 +8,33 @@ Created on Thu Oct 29 13:39:52 2020
 
 import numpy as np
 
-def GaussInteg(func,N,q0):
+def func(q):
+    func=np.exp(-q**2)
+    return func
+
+def GaussInteg(i,N,q0,K):
+    x=-1+i*(2/N)
+    q=q0*(1+x)/(1-x)
+    qderiv=2*q0/(-1+x)**2
+    sum=0
+    for j in range(0,N):
+        print(j)
+        sum+= K[i][j]*func(q)
+    return sum
+
+def GaussInteg2(func,N,q0):
+    Q=np.zeros((N,1))
     QDERIV=np.zeros((N,1))
     for i in range(0,N):
         x=-1+i*(2/N)
+        q=q0*(1+x)/(1-x)
         qderiv=2*q0/(-1+x)**2
+        Q[i-1]=q
         QDERIV[i-1]=qderiv
     sum=0
-    return QDERIV
+    return Q,QDERIV
+
+N=10
+K=np.random.randint(1,100+1,size = (N,N))
         
-print(GaussInteg(1,20,1))
+print(GaussInteg(1,N,1,K))
