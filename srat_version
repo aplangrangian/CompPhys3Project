@@ -1,0 +1,54 @@
+import numpy as np
+#%%
+A = np.random.randint(1,10+1,size = (10,10))
+B = np.random.randint(1,10+1, size = (1,10))
+
+
+def augment(A,B):
+    a=A.tolist()
+    b=list(B)
+    n=len(a)
+    for i in range(0,n):
+        print(i)
+        a[i].append(b[0][i])
+        
+    return a
+
+A_aug=augment(A,B)        
+
+#%% Pivoting function before Eqn 41 ish
+def pivot(A,k):
+    Amax = A[k][k]
+    for i in range(k+1,np.shape(A)[0]):
+        if A[i][k] > Amax:
+            A[k],A[i] = A[i], A[k]
+
+#%% Gaussian Elim function
+def GaussianEliminationWPivot(A,B):
+    A_aug=augment(A,B)  
+    # Elimination Eqn 43 for general
+    n = np.shape(A_aug)[0] # to make the length neater (N)
+    n1 = np.shape(A_aug)[1] #width (N+1)  now we have N x N+1 matrix as in 42 or 40
+    for i in range(n):
+        print(i)
+        pivot(A, i) #pivots for each set of cols
+        for j in range(i+1, n): 
+            A[j] = [A[j][k] - A[i][k]*A[j][i]/A[i][i] for k in range(n1)] #elim
+            
+    #backwards substitution 
+    x = [0]*np.shape(A)[0] #list of N zeros
+    for i in range(np.shape(A)[0]-1, -1, -1):
+        summed=0
+        for j in range(i, np.shape(A)[0]):
+            summed += A[i][j] * x[j]  #summing over each iteration
+            x[i] = (A[i][np.shape(A)[0]] - summed) / A[i][i] #eqn 37
+    return x #returns x values Ie sols to matrix eq.
+#%% Matrix Def
+#A= [[8,2,8,10],[6,10,9,1],[6,4,5,1]] #needs to be dtype == list, sample matrix
+print(GaussianEliminationWPivot(A,B))
+
+#%% Testing
+#testA = [[8,2,8],[6,10,9],[6,4,5]] 
+#testB = GaussianEliminationWPivot(A)
+
+print(np.matmul(A,B))
