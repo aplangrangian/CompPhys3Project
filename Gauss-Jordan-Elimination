@@ -30,12 +30,29 @@ def GaussianEliminationWPivot(A):
             summed += A[i][j] * x[j]  #summing over each iteration
             x[i] = (A[i][np.shape(A)[0]] - summed) / A[i][i] #eqn 37
     return x #returns x values Ie sols to matrix eq.
+
 #%% Matrix Def
-A= [[8,2,8,10],[6,10,9,1],[6,4,5,1]] #needs to be dtype == list, sample matrix
-print(GaussianEliminationWPivot(A))
+#A= [[8,2,8,10],[6,10,9,1],[6,4,5,1]] #needs to be dtype == list, sample matrix
+#%%
+A = np.random.randint(1,10+1,size = (10,10))
+B = np.random.randint(1,10+1, size = (1,10))
+#%%
+def augment(A,B):
+    a=A.tolist()
+    b=list(B)
+    n=len(a)
+    for i in range(0,n):
+        print(i)
+        a[i].append(b[0][i])
+        
+    return a
+
+A_aug=augment(A,B)        
+#%%
+print(GaussianEliminationWPivot(A_aug))
 
 #%% Testing
-testA = [[8,2,8],[6,10,9],[6,4,5]] 
-testB = GaussianEliminationWPivot(A)
+#testA = [[8,2,8],[6,10,9],[6,4,5]] 
+testB = GaussianEliminationWPivot(A_aug)
 
-print(np.matmul(testA,testB))
+print(np.matmul(A,testB))
