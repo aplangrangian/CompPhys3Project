@@ -6,40 +6,36 @@ Created on Thu Oct 29 13:39:52 2020
 @author: romankosarzycki
 """
 
+#Imports
 import numpy as np
 
+
+#Functions
 def func(k,q):
     func=k*np.exp(-q**2)
     return func
 
-def GaussInteg(i,N,q0,K,k):
-    x=-1+i*(2/N)
-    q=q0*(1+x)/(1-x)
-    qderiv=2*q0/(-1+x)**2
+def weight_func(Mesh_Size):
+    x = np.polynomial.legendre.leggauss(Mesh_Size)
+    return x 
+
+def GaussInteg(x,N,q0,K,k):
     sum=0
     for j in range(0,N):
-        sum+= K[i][j]*func(k,q)
-        print(func(k,q))
+        q=q0*(1+x[j])/(1-x[j])
+        sum+= K[j]*func(k,q)
+        print(sum)
     return sum
 
-def GaussInteg2(func,N,q0):
-    Q=np.zeros((N,1))
-    QDERIV=np.zeros((N,1))
-    for i in range(0,N):
-        x=-1+i*(2/N)
-        q=q0*(1+x)/(1-x)
-        qderiv=2*q0/(-1+x)**2
-        Q[i-1]=q
-        QDERIV[i-1]=qderiv
-    sum=0
-    return Q,QDERIV
-
-N=10
-K=np.identity(N)
-k=0
+#Variables
+Mesh_Size = 40
+N=40
+k=1
 F=np.zeros((N,1))
 q0=1
 
-for i in range(0,N):
-    k+=1
-    F[i]=GaussInteg(i,N,q0,K,k)
+#Body of Code    
+Mesh_asbsesca = weight_func(Mesh_Size)[0]
+Mesh_weights = weight_func(Mesh_Size)[1]
+
+F=GaussInteg(Mesh_asbsesca,N,q0,Mesh_weights,k)
