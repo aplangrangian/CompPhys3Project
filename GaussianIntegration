@@ -1,41 +1,41 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 29 13:39:52 2020
-
 @author: romankosarzycki
 """
 
 #Imports
 import numpy as np
+from scipy.misc import derivative
 
 
 #Functions
-def func(k,q):
-    func=k*np.exp(-q**2)
-    return func
+def func(q):
+    return (1+q)**(-2)
+
+def qfunc(x):
+    return (1+x)/(1-x)
 
 def weight_func(Mesh_Size):
-    x = np.polynomial.legendre.leggauss(Mesh_Size)
-    return x 
+    X = np.polynomial.legendre.leggauss(Mesh_Size)
+    return X
 
-def GaussInteg(x,N,q0,K,k):
+def GaussInteg(X,N,K):
     sum=0
     for j in range(0,N):
-        q=q0*(1+x[j])/(1-x[j])
-        sum+= K[j]*func(k,q)
+        q=qfunc(X[j])
+        sum+= K[j]*func(q)*derivative(qfunc,X[j], dx=1e-6)
         print(sum)
     return sum
 
 #Variables
-Mesh_Size = 40
 N=40
-k=1
 F=np.zeros((N,1))
-q0=1
 
 #Body of Code    
-Mesh_asbsesca = weight_func(Mesh_Size)[0]
-Mesh_weights = weight_func(Mesh_Size)[1]
+Mesh_asbsesca = weight_func(N)[0]
+Mesh_weights = weight_func(N)[1]
 
-F=GaussInteg(Mesh_asbsesca,N,q0,Mesh_weights,k)
+F=GaussInteg(Mesh_asbsesca,N,Mesh_weights)
