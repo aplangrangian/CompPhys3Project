@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Created on Tue Nov 17 14:58:23 2020
 
 @author: alexlange
 """
 import numpy as np
+from scipy.misc import derivative
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
 #%% Mesh points and weights
 Position_Mesh_Size = 100
 def weight_func(Mesh_Size):
@@ -20,3 +25,75 @@ def weight_func(Mesh_Size):
 
 Momentum_Mesh_asbsesca = weight_func(Momentum_Mesh_Size)[0]
 Momentum_Mesh_Weights = weight_func(Momentum_Mesh_Size)[1]
+#%%
+def GaussInteg(X,N,K):
+    sum=0
+    for j in range(0,N):
+        q=qfunc(X[j])
+        sum+= K[j]*func(q)*derivative(qfunc,X[j], dx=1e-6)
+    return sum
+
+def func(q):
+    return (1+q)**(-4)
+
+def qfunc(x):
+    return 2*(1+x)/(1-x)
+
+F = GaussInteg(Position_Mesh_asbsesca,Position_Mesh_Size,Position_Mesh_Weights)
+G = GaussInteg(Momentum_Mesh_asbsesca,Momentum_Mesh_Size,Momentum_Mesh_Weights)
+#%% POTENTIAL params
+VR1 = 1438.720/41.47;
+VA1 = 513.968/41.47;
+VR3 = 1438.720/41.47;
+VA3 = 626.885/41.47;
+mur = 3.110;
+mua = 1.550;
+VhatR1 = 2*VR1/np.pi
+VhatA1 = 2*VA1/np.pi
+VhatR3 = 2*VR3/np.pi
+VhatA3 = 2*VA3/np.pi
+#%% potential function def
+def MT1(r):
+    return VhatR1*np.e**(-mur*r)/r - VhatA1*np.e**(-mua*r)/r
+def MT3(r):
+    return VhatR3*np.e**(-mur*r)/r - VhatA3*np.e**(-mua*r)/r
+#%% 
+#axes = plt.gca()
+#axes.set_xlim([0,4])
+#axes.set_ylim([-2,5])
+#r = np.arange(0,4,.01)
+#plt.plot(r,MT1(r))
+#plt.plot(r,MT3(r))
+#plt.show()
+#%%
+def Potential1(Position_Mesh_asbsesca,Position_Mesh_Weights,Momentum_Mesh_asbsesca):
+    sum = 0
+    Potential = np.zeros((len(Position_Mesh_asbsesca),len(Position_Mesh_asbsesca)))
+    for i in range(np.shape(Potential)[0]):
+        sum = 0
+        for j in range(np.shape(Potential)[1]):
+            sum = 0
+            for n in range(len(Position_Mesh_asbsesca)):
+                if i == 0 and j ==0:
+                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]
+                    *Momentum_Mesh_asbsesca[n]*MT1(Momentum_Mesh_asbsesca[n]))
+                elif i ==0 and j!=0:
+                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]*np.sin(Momentum_Mesh_asbsesca[n]
+                    *Position_Mesh_asbsesca[j])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[j]))
+                elif i !=0 and j==0:
+                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]*np.sin(Momentum_Mesh_asbsesca[n]
+                    *Position_Mesh_asbsesca[i])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[i]))
+                else:
+                    sum+= (Position_Mesh_Weights[n]*np.sin(Momentum_Mesh_asbsesca[n]*Position_Mesh_asbsesca[i])
+                    *np.sin(Momentum_Mesh_asbsesca[n]*Position_Mesh_asbsesca[j])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[j]
+                    *Position_Mesh_asbsesca[i]))
+            Potential[i][j] = sum
+    return Potential  
+potential1 = Potential1(Position_Mesh_asbsesca,Position_Mesh_Weights,Momentum_Mesh_asbsesca) 
+#%%
+X, Y = np.meshgrid(Position_Mesh_asbsesca,Position_Mesh_Weights)
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_wireframe(X, Y, potential1, color='green')
+ax.set_title('wireframe')
+plt.show()
