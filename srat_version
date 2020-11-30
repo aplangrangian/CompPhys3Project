@@ -122,10 +122,26 @@ def Vi(r,i):
 
 #%%
 
-def U(N):
-    w=updatedmesh[1]
-    q=updatedmesh[0]
+def U(N,n):#n to indicate I or III
+    U=np.zeros((N,N))
+    mesh=updatedmesh(N)
+    w=mesh[1]
+    q=mesh[0]
+    r=mesh[0]
     for i,j in zip(range(N),range(N)):
-      sum=0
-      for l in range(N):
-          sum+=w[l]*Sin(q[i]*r[l])/q[i]*V(r[l])*Sin(q[j]*r[l])/q[j]
+        if q[i]!=0 and q[j]!=0:
+            sum=0
+            for l in range(N):
+                sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(q[j]*r[l])/q[j]
+            U[i,j]=sum
+        if q[i]==0 or q[j]==0:
+            sum=0
+            for l in range(N):
+                sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
+            U[i,j]=sum  
+        if q[i]==0 and q[j]==0:
+            sum=0
+            for l in range(N):
+                sum+=w[l]*r[l]^2*Vi(r[l],n)
+            U[i,j]=sum
+    return U
