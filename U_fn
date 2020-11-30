@@ -1,0 +1,91 @@
+#imports
+import numpy as np
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
+
+def mesh(Mesh_Size):
+    X = np.polynomial.legendre.leggauss(Mesh_Size)
+    return X
+
+def updatedmesh(Mesh_Size):
+    q=np.zeros(N)
+    w=np.zeros(N)
+    for i in range(N):
+        q[i]=(1+mesh(N)[0][i])/(1-mesh(N)[0][i])
+        w[i]=2*mesh(N)[1][i]/(1-mesh(N)[0][i])**2
+    return q,w #same for position and momentum
+    
+N=100
+
+def Vi(r,i):
+    Vr=1438.72
+    mur=3.11
+    mua=1.55
+    conversion=41.47 #MeVfm^2
+    if (i==1):
+        Va=513.968
+    elif (i==3):
+        Va=626.885
+    V=2/np.pi*1/conversion*(Vr*np.exp(-mur*r)/r-Va*np.exp(-mua*r)/r)
+    print(V)
+    return V
+
+
+
+def U(N,n):#n to indicate I or III
+    U=np.zeros((N,N))
+    mesh=updatedmesh(N)
+    w=mesh[1]
+    q=mesh[0]
+    r=mesh[0]
+    for i in range(N):
+        for j in range(N):
+            if q[i]!=0 and q[j]!=0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(q[j]*r[l])/q[j]
+                U[i,j]=sum
+            if q[i]==0 or q[j]==0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
+                U[i,j]=sum  
+            if q[i]==0 and q[j]==0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*r[l]^2*Vi(r[l],n)
+                U[i,j]=sum
+    return U
+
+def Uij(N,n,qi,qj):
+    mesh=updatedmesh(N)
+    w=mesh[1]
+#   q=mesh[0]
+    r=mesh[0]
+    if qi!=0 and qj!=0:
+        sum=0
+        for l in range(N):
+            sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(q[j]*r[l])/q[j]
+        Uij=sum
+    if qi==0 or qj==0:
+        sum=0
+        for l in range(N):
+            sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
+        Uij=sum  
+    if q[i]==0 and q[j]==0:
+        sum=0
+        for l in range(N):
+            sum+=w[l]*r[l]^2*Vi(r[l],n)
+        Uij=sum
+    return Uij
+p=updatedmesh(N)[0]
+q=updatedmesh(N)[0]
+P,Q = np.meshgrid(p,q)
+Ui=Uij(N,1,P,Q)
+Uiii=Uij(N,3,P,Q)
+
+fig=plt.figure()
+ax=plt.axes(projection='3d')
+ax.plot_wireframe(P,Q,Ui,color='green')
+ax.plot_wireframe(P,Q,Uiii,color='red')
+plt.show()
