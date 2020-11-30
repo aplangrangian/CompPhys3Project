@@ -117,7 +117,7 @@ def Vi(r,i):
         Va=513.968
     elif (i==3):
         Va=626.885
-    V=2/Pi*1/conversion*(Vr*exp(-mur*r)/r-Va*exp(-mua*r)/r)
+    V=2/np.pi*1/conversion*(Vr*np.exp(-mur*r)/r-Va*np.exp(-mua*r)/r)
     return V
 
 #%%
