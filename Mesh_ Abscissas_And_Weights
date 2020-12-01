@@ -15,32 +15,16 @@ def weight_func(Mesh_Size):
     x = np.polynomial.legendre.leggauss(Mesh_Size)
     return x 
 
-Position_Mesh_asbsesca = weight_func(Position_Mesh_Size)[0]
+Position_Mesh_Abscissa = weight_func(Position_Mesh_Size)[0]
 Position_Mesh_Weights = weight_func(Position_Mesh_Size)[1]
 #%%
-Momentum_Mesh_Size = 100
+Momentum_Mesh_Size = 40
 def weight_func(Mesh_Size):
     x = np.polynomial.legendre.leggauss(Mesh_Size)
     return x 
 
-Momentum_Mesh_asbsesca = weight_func(Momentum_Mesh_Size)[0]
+Momentum_Mesh_Abscissa = weight_func(Momentum_Mesh_Size)[0]
 Momentum_Mesh_Weights = weight_func(Momentum_Mesh_Size)[1]
-#%%
-def GaussInteg(X,N,K):
-    sum=0
-    for j in range(0,N):
-        q=qfunc(X[j])
-        sum+= K[j]*func(q)*derivative(qfunc,X[j], dx=1e-6)
-    return sum
-
-def func(q):
-    return (1+q)**(-4)
-
-def qfunc(x):
-    return 2*(1+x)/(1-x)
-
-F = GaussInteg(Position_Mesh_asbsesca,Position_Mesh_Size,Position_Mesh_Weights)
-G = GaussInteg(Momentum_Mesh_asbsesca,Momentum_Mesh_Size,Momentum_Mesh_Weights)
 #%% POTENTIAL params
 VR1 = 1438.720/41.47;
 VA1 = 513.968/41.47;
@@ -57,6 +41,28 @@ def MT1(r):
     return VhatR1*np.e**(-mur*r)/r - VhatA1*np.e**(-mua*r)/r
 def MT3(r):
     return VhatR3*np.e**(-mur*r)/r - VhatA3*np.e**(-mua*r)/r
+def GaussInteg(X,N,K):
+    sum=0
+    for j in range(0,N):
+        q=qfunc(X[j])
+#        w = wfunc(K)
+        sum+= K[j]*func(q)*derivative(qfunc,X[j], dx=1e-6)
+    return sum
+
+def func(q):
+    return (1+q)**(-4)
+
+def qfunc(x):
+    return 2*(1+x)/(1-x)
+
+#def wfunc(w):
+#    return 2*2*
+Momentum_Transformed_Mesh_Abscissa = 2*(1+Momentum_Mesh_Abscissa)/(1-Momentum_Mesh_Abscissa)
+Position_Transformed_Mesh_Abscissa = 2*(1+Position_Mesh_Abscissa)/(1-Position_Mesh_Abscissa)
+Momentum_Transformed_Mesh_Weights = 2 * 2 *(Momentum_Mesh_Weights)/(1-Momentum_Mesh_Abscissa)**2
+
+F = GaussInteg(Position_Mesh_Abscissa,Position_Mesh_Size,Position_Mesh_Weights)
+G = GaussInteg(Momentum_Mesh_Abscissa,Momentum_Mesh_Size,Momentum_Mesh_Weights)
 #%% 
 #axes = plt.gca()
 #axes.set_xlim([0,4])
@@ -66,34 +72,65 @@ def MT3(r):
 #plt.plot(r,MT3(r))
 #plt.show()
 #%%
-def Potential1(Position_Mesh_asbsesca,Position_Mesh_Weights,Momentum_Mesh_asbsesca):
-    sum = 0
-    Potential = np.zeros((len(Position_Mesh_asbsesca),len(Position_Mesh_asbsesca)))
+def Potential1(Position_Mesh_Abscissa,Position_Mesh_Weights,Momentum_Mesh_Abscissa):
+    fuck = 0
+    Potential = np.zeros((len(Momentum_Mesh_Abscissa),len(Momentum_Mesh_Abscissa)))
     for i in range(np.shape(Potential)[0]):
-        sum = 0
+        fuck = 0
         for j in range(np.shape(Potential)[1]):
-            sum = 0
-            for n in range(len(Position_Mesh_asbsesca)):
-                if i == 0 and j ==0:
-                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]
-                    *Momentum_Mesh_asbsesca[n]*MT1(Momentum_Mesh_asbsesca[n]))
-                elif i ==0 and j!=0:
-                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]*np.sin(Momentum_Mesh_asbsesca[n]
-                    *Position_Mesh_asbsesca[j])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[j]))
-                elif i !=0 and j==0:
-                    sum+= (Position_Mesh_Weights[n]*Momentum_Mesh_asbsesca[n]*np.sin(Momentum_Mesh_asbsesca[n]
-                    *Position_Mesh_asbsesca[i])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[i]))
-                else:
-                    sum+= (Position_Mesh_Weights[n]*np.sin(Momentum_Mesh_asbsesca[n]*Position_Mesh_asbsesca[i])
-                    *np.sin(Momentum_Mesh_asbsesca[n]*Position_Mesh_asbsesca[j])*MT1(Momentum_Mesh_asbsesca[n])/(Position_Mesh_asbsesca[j]
-                    *Position_Mesh_asbsesca[i]))
-            Potential[i][j] = sum
-    return Potential  
-potential1 = Potential1(Position_Mesh_asbsesca,Position_Mesh_Weights,Momentum_Mesh_asbsesca) 
-#%%
-X, Y = np.meshgrid(Position_Mesh_asbsesca,Position_Mesh_Weights)
+            fuck = 0
+            for n in range(len(Momentum_Mesh_Abscissa)):
+                if i == 0 and j ==0: #W_rl * r_l^2 * V(r))
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n] 
+                    *Position_Mesh_Abscissa[n]*MT1(Position_Mesh_Abscissa[n]))
+                elif i ==0 and j!=0: # W_rl * r_l *sin(r_l * p(j))/p(j)
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n]*np.sin(Momentum_Mesh_Abscissa[j]
+                    *Position_Mesh_Abscissa[n])*MT1(Position_Mesh_Abscissa[n])/(Momentum_Mesh_Abscissa[j]))
+                elif i !=0 and j==0: # W_rl * r_l *sin(r_l * p(i))/p(i)
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n]*np.sin(Momentum_Mesh_Abscissa[i]
+                    *Position_Mesh_Abscissa[n])*MT1(Position_Mesh_Abscissa[n])/(Momentum_Mesh_Abscissa[i]))
+                else:               # W_rl * sin(r_l * p(i))/p(i) sin(r_l * p(j))/p(j)
+                    fuck+= (Position_Mesh_Weights[n]*np.sin(Momentum_Mesh_Abscissa[i]*Position_Mesh_Abscissa[n])
+                    *np.sin(Momentum_Mesh_Abscissa[j]*Position_Mesh_Abscissa[n])*MT1(Position_Mesh_Abscissa[n])
+                    /(Momentum_Mesh_Abscissa[j]*Momentum_Mesh_Abscissa[i]))
+
+            Potential[i][j] = fuck
+    return Potential
+def Potential3(Position_Mesh_Abscissa,Position_Mesh_Weights,Momentum_Mesh_Abscissa):
+    fuck = 0
+    Potential = np.zeros((len(Momentum_Mesh_Abscissa),len(Momentum_Mesh_Abscissa)))
+    for i in range(np.shape(Potential)[0]):
+        fuck = 0
+        for j in range(np.shape(Potential)[1]):
+            fuck = 0
+            for n in range(len(Momentum_Mesh_Abscissa)):
+                if i == 0 and j ==0: #W_rl * r_l^2 * V(r))
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n] 
+                    *Position_Mesh_Abscissa[n]*MT3(Position_Mesh_Abscissa[n]))
+                elif i ==0 and j!=0: # W_rl * r_l *sin(r_l * p(j))/p(j)
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n]*np.sin(Momentum_Mesh_Abscissa[j]
+                    *Position_Mesh_Abscissa[n])*MT3(Position_Mesh_Abscissa[n])/(Momentum_Mesh_Abscissa[j]))
+                elif i !=0 and j==0: # W_rl * r_l *sin(r_l * p(i))/p(i)
+                    fuck+= (Position_Mesh_Weights[n]*Position_Mesh_Abscissa[n]*np.sin(Momentum_Mesh_Abscissa[i]
+                    *Position_Mesh_Abscissa[n])*MT3(Position_Mesh_Abscissa[n])/(Momentum_Mesh_Abscissa[i]))
+                else:               # W_rl * sin(r_l * p(i))/p(i) sin(r_l * p(j))/p(j)
+                    fuck+= (Position_Mesh_Weights[n]*np.sin(Momentum_Mesh_Abscissa[i]*Position_Mesh_Abscissa[n])
+                    *np.sin(Momentum_Mesh_Abscissa[j]*Position_Mesh_Abscissa[n])*MT3(Position_Mesh_Abscissa[n])
+                    /(Momentum_Mesh_Abscissa[j]*Momentum_Mesh_Abscissa[i]))
+
+            Potential[i][j] = fuck
+    return Potential
+potential1 = Potential1(Position_Transformed_Mesh_Abscissa,Momentum_Transformed_Mesh_Weights,Momentum_Transformed_Mesh_Abscissa) 
+potential3 = Potential1(Position_Transformed_Mesh_Abscissa,Momentum_Transformed_Mesh_Weights,Momentum_Transformed_Mesh_Abscissa) 
+    #%%
+X1, Y1 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa[0:80],Momentum_Transformed_Mesh_Abscissa[0:80])
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_wireframe(X, Y, potential1, color='green')
-ax.set_title('wireframe')
+ax.set_title('fugma')
+X3, Y3 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa[0:80],Momentum_Transformed_Mesh_Abscissa[0:80])
+ax.plot_wireframe(X1, Y1, potential1[0:80,0:80], color='green')
+
+ax.plot_wireframe(X3, Y3, potential3[0:80,0:80], color='red')
+
+
 plt.show()
