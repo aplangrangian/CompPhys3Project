@@ -102,7 +102,7 @@
 \newtagform{brackets}{[}{]}
 \usetagform{brackets}
 
-\counterwithin{equation}{section} % reset equation counter for each section
+%\counterwithin{equation}{section} % reset equation counter for each section
 
 \newtheoremstyle{hw-plain}{}{}{\itshape}{}{\bfseries}{ --- }{0pt}{}
 \newtheoremstyle{hw-definition}{}{}{}{}{\bfseries}{ --- }{0pt}{}
