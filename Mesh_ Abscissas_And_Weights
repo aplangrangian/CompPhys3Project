@@ -124,10 +124,13 @@ potential1 = Potential1(Position_Transformed_Mesh_Abscissa,Momentum_Transformed_
 potential3 = Potential3(Position_Transformed_Mesh_Abscissa,Momentum_Transformed_Mesh_Weights,Momentum_Transformed_Mesh_Abscissa) 
     #%%
 #X1, Y1 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa,Momentum_Transformed_Mesh_Abscissa)
-X1, Y1 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa[0:66],Momentum_Transformed_Mesh_Abscissa[0:66])
+X1, Y1 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa[0:67],Momentum_Transformed_Mesh_Abscissa[0:67])
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_wireframe(X1, Y1, potential1[0:66,0:66], color='black')
-ax.plot_wireframe(X1, Y1, potential3[0:66,0:66], color='purple')
-
+ax.plot_wireframe(X1, Y1, potential1[0:67,0:67], color='black')
+ax.plot_wireframe(X1, Y1, potential3[0:67,0:67], color='purple')
+ax.set_xlabel('p [$fm^{-1}$]')
+ax.set_ylabel('q [$fm^{-1}$]')
+ax.set_zlabel('U(p,q) [fm]')
+ax.set_title('U(p,q) for MT-I (black) and MT-III (purple)')
 plt.show()
