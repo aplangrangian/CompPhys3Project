@@ -7,6 +7,20 @@
 
 \maketitle
 
+In order to perform the Gauss-Jordan elimination method with pivoting, we used the following relation:
 
+\begin{equation}
+\label{1}
+\int^{\infty}_0 dq \ f(q) = \sum^N_{i=1} \tilde{\omega}_if_i + R_N[f,q] \ , \ f_i=f(q_i) \ , \ \tilde{\omega}_i = \omega_i \left[ \frac{dq}{dx} \right]_{x=x_i}
+\end{equation}
+
+The term $R_N$ represents the remainder, but we will choose a sufficiently large $N$ such that the remainder is negligible. For our purposes, we will use the following definition of $q$:
+
+\begin{equation}
+\label{2}
+q(x)= q_0 \frac{1+x}{1-x}
+\end{equation}
+
+Eq.~(\ref{2}) allows $q$ to vary from 0 to $\infty$ when $x$ varies from -1 to 1. 
 
 \end{document}
