@@ -18,7 +18,7 @@ def weight_func(Mesh_Size):
 Position_Mesh_Abscissa = weight_func(Position_Mesh_Size)[0]
 Position_Mesh_Weights = weight_func(Position_Mesh_Size)[1]
 #%%
-Momentum_Mesh_Size = 40
+Momentum_Mesh_Size = 100
 def weight_func(Mesh_Size):
     x = np.polynomial.legendre.leggauss(Mesh_Size)
     return x 
@@ -128,9 +128,7 @@ fig = plt.figure()
 ax = plt.axes(projection='3d')
 ax.set_title('fugma')
 X3, Y3 = np.meshgrid(Momentum_Transformed_Mesh_Abscissa[0:80],Momentum_Transformed_Mesh_Abscissa[0:80])
-ax.plot_wireframe(X1, Y1, potential1[0:80,0:80], color='green')
-
-ax.plot_wireframe(X3, Y3, potential3[0:80,0:80], color='red')
+ax.plot_wireframe(X1, Y1, potential1[0:80,0:80], color='green'),ax.plot_wireframe(X3, Y3, potential3[0:80,0:80], color='red')
 
 
 plt.show()
