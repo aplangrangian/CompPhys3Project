@@ -61,25 +61,24 @@ This process was accomplished in our code in the following manner for an $N \tim
 #Define functions first
 
 def pivot(A,k):
-	Amax = A[k][k]
-	if  (k,j) > (k,k) for k<j<N
-		Amax = (k,j)
+	Define Amax to be first diagonal term A[k,k]
+	if  any other element in same col > Amax, for all elements in col
+		Amax = larger element
 		
 def GaussianEliminationWPivot(A):
 	#Elimination
 	for i in range(N):
-		pivot(A,i)
-		for j in range(i+1,N) and k in range(N+1)
-			A[j][k] = A[j][k] - A[i][k]*A[j][i]/A[i][i]
+	    Recall function pivot(A,i)
+	    Generalized Elimination Procedure for each element in each column
+			Eq. 43 from writeup
 	#Backwards substitution
 	#First, a list of N zeros
-	x=[0]*shape(A)[0]
+	x=NxN empty matrix
 	#"For" loop that does stuff
 	for i in range(N):
 		sum=0
 		for j in range(N):
-			sum=sum+A[i][j]*x[j]
-			x[i]=(A[i][N]-sum)/A[i][i]
+			EQ. 37 from write-up
 	#Returns solutions to matrix equation
 	return x
 	
