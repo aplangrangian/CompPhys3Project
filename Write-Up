@@ -106,6 +106,8 @@ print(check)
 
 \end{lstlisting}
 
+\pagebreak
+
 \exercise
 
 In order to perform the Gaussian integration, we used the following relation:
@@ -155,5 +157,23 @@ weights = weight_func(N)[1]
 Integral=GaussInteg(asbsesca,N,weights)
 
 \end{lstlisting}
+
+\pagebreak
+
+\exercise
+
+Next, the potential matrix elements $U(p,q)$ were generated for a given mesh. 
+
+\pagebreak
+
+\exercise
+
+In order to implement the Gauss-Jordan elimination in part 1, an augmented matrix needs to be generated. 
+
+\pagebreak
+
+\exercise
+
+Finally, the system of linear equations from part 4 was solved and the Jost function was calculated. 
 
 \end{document}
