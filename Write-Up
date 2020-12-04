@@ -282,7 +282,23 @@ def U(N,n):
    user input of qi and qj
 
 def Uij(N,n,qi,qj):
-	
+	#Unlike U(N,n), this function allows for user input and also
+	   just gives the matrix element U_ij
+	r=q from UpdatedMesh
+	w=w from UpdatedMesh
+	Use eq.(11) from write-up here
+	Specific form is dependent on qi and qj
+	if qi and qj aren't 0
+		for k in range(N):
+			Take sum in eq.(11)
+	if qi or qj are 0
+		for k in range(N):
+			Take sum in eq.(12)
+	if qi and qj are 0
+		for k in range(N):
+			Take sum in eq.(13)
+	Set sum equal to Uij
+	return Uij
 
 \end{lstlisting}
 
