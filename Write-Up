@@ -171,11 +171,15 @@ Next, the potential matrix elements $U(p,q)$ were generated for a given mesh.
 
 Given the potential:
 \begin{equation}
-    V(r)=V_{R} \frac{\mathrm{e}^{-\mu_{R} r}}{r}-V_{A} \frac{\mathrm{e}^{-\mu_{A} r}}{r}
+\label{7}
+V(r)=V_{R} \frac{\mathrm{e}^{-\mu_{R} r}}{r}-V_{A} \frac{\mathrm{e}^{-\mu_{A} r}}{r}
 \end{equation}
+
 With the following chart and appropriate unit conversions:
+
 \begin{equation}
-    \begin{array}{|c||c|r|r|r|}
+\label{8}
+\begin{array}{|c||c|r|r|r|}
 \hline \begin{array}{c}
 \text { MT } \\
 \text { model }
@@ -197,15 +201,39 @@ V_{A} \\
 \hline
 \end{array}
 \end{equation}
-To construct the U matrix, using equations 3 and 4 from the write-up:
+
+To construct the $U$ matrix, using equations 3 and 4 from the write-up:
+
 \begin{equation}
-    U(p, q)=\frac{2}{\pi p q} \int_{0}^{\infty} d r \sin (p r)[m V(r)] \sin (q r)
+\label{9}
+U(p, q)=\frac{2}{\pi p q} \int_{0}^{\infty} d r \sin (p r)[m V(r)] \sin (q r)
 \end{equation}
+
 and 
+
 \begin{equation}
-    U(p, 0)=U(0, p)=\frac{2}{\pi p} \int_{0}^{\infty} d r r[m V(r)] \sin (p r) \quad \text { and } \quad U(0,0)=\frac{2}{\pi} \int_{0}^{\infty} d r r^{2}[m V(r)]
+\label{10}
+U(p, 0)=U(0, p)=\frac{2}{\pi p} \int_{0}^{\infty} d r r[m V(r)] \sin (p r) \quad \text { and } \quad U(0,0)=\frac{2}{\pi} \int_{0}^{\infty} d r r^{2}[m V(r)]
 \end{equation}
-A U matrix can be populated using the following pseudocode:
+
+For specific cases used in the code, the $U$ matrix elements can be calculated in the following way:
+
+\begin{equation}
+\label{11}
+U_{ij} = U(q_i,q_j) = \sum^N_{k=1} w_{rk} \frac{\sin{(q_ir_k)}}{q_i} V(r_k) \frac{\sin{(q_jr_k)}}{q_j} \ ; \ q_i \ \text{and}\ q_j \neq 0
+\end{equation}
+
+\begin{equation}
+\label{12}
+U^{(0)}_{i} = U(0,q_i) = \sum^N_{k=1} w_{rk}r_k \frac{\sin{(q_ir_k)}}{q_i} V(r_k)
+\end{equation}
+
+\begin{equation}
+\label{13}
+U^{(00)} = U(0,0) =  \sum^N_{k=1} w_{rk} r_l^2 V(r_k)
+\end{equation}
+
+A $U$ matrix can be populated using the following pseudocode:
 
 \begin{lstlisting}[language=Python]
 
@@ -232,7 +260,29 @@ def Vi(r,i):
 	return V
 	
 def U(N,n):
+	U=NxN empty matrix
+	q,r=q from UpdatedMesh
+	w=w from UpdatedMesh
+	for i in range (N) and j in range (N):
+		Use eq.(11) from write-up here
+		Specific form is dependent on q[i] and q[j]
+		if q[i] and q[j] aren't 0
+			for k in range(N):
+				Take sum in eq.(11)
+		if q[i] or q[j] are 0
+			for k in range(N):
+				Take sum in eq.(12)
+		if q[i] and q[j] are 0
+			for k in range(N):
+				Take sum in eq.(13)
+		Set the sum equal to matrix element U[i,j]
+	return U
+	
+#U(N,n) is for set values of qi and qj, the next function allows for 
+   user input of qi and qj
 
+def Uij(N,n,qi,qj):
+	
 
 \end{lstlisting}
 
