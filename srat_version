@@ -173,20 +173,21 @@ def Ukk_func(N,n,k):
     r=updatedmesh(N)[0]
     sum=0
     for l in range(N):
-        sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l])*np.sin(k*r[l])/k
+        sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l],n)*np.sin(k*r[l])/k
     Ukk=sum
     return Ukk
 
 #defining K
 def K_func(N,n,k):
     K=np.zeros((N,N))
-    w=updatedmesh(N)[1]
     q=updatedmesh(N)[0]
     U=U_func(N,n)
     Uk=Uk_func(N,n,k)
-    for i in range(N):
-        for j in range (N):
-            K[i,j]=w[j]*q[j]**2*(U[i,j]-Uk[i])/(k**2-q[j]**2)
+    for i in range(100):
+        for j in range (100):
+            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)
+            print(U[i,j],Uk[i],k**2,q[j]**2)
+            print(K[i,j])  
     return K
 
 #W vector
@@ -198,7 +199,7 @@ def Wk_func(N,n,k):
         identity[i,i]=1
     A=identity-K
     A_aug= np.insert(A,np.shape(A)[0],Uk,1)
-    A_aug_list=A_aug.to_list
+    A_aug_list=A_aug.tolist()
     Wk=GaussianEliminationWPivot(A_aug_list)
     return Wk
 
@@ -250,3 +251,38 @@ def scat_length_func(N,n):
         sum+=w[i]*W0[i]
     a=np.pi/2*W00/(1+sum)
     return a
+#%%
+#testing these functions
+N=100
+k=0.77643#fm^-1
+
+Uki=Uk_func(N,1,k)[0:70]
+Ukiii=Uk_func(N,3,k)[0:70]
+
+Ukki=Ukk_func(N,1,k)
+Ukkiii=Ukk_func(N,3,k)
+
+Ki=K_func(N,1,k)[0:70,0:70]
+Kiii=K_func(N,3,k)[0:70,0:70]
+
+Wki=Wk_func(N,1,k)[0:70]
+Wkiii=Wk_func(N,3,k)[0:70]
+
+
+
+#%%
+p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
+q=updatedmesh(N)[0][0:70]
+P,Q = np.meshgrid(p,q)
+
+print((k**2-q[0]**2))
+
+
+fig=plt.figure()
+ax=plt.subplot(111,projection='3d')
+ax.plot_surface(P,Q,Ki,color='green')
+ax.plot_surface(P,Q,Kiii,color='red')
+   
+plt.show()
+#%%
+#still testing
