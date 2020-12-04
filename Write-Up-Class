@@ -67,7 +67,7 @@
     \popQED\endtrivlist\@endpefalse%
 }
 
-\providecommand{\exercisename}{Exercise}
+\providecommand{\exercisename}{Part}
 \newaliascnt{exercise}{section}
 \newcommand*{\exercise}{\@ifstar{%
     \@exercise%
