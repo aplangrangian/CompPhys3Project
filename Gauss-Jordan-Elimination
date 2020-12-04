@@ -12,7 +12,7 @@ def pivot(A,k):
     Amax = A[k][k]
     for i in range(k+1,np.shape(A)[0]):
         dummy=0
-        if A[i][k] > Amax:
+        if A[i][k]-Amax > 1e-16:
             dummy = A[k]
             Amax = A[i][k]
             A[k],A[i] = A[i], dummy
@@ -38,8 +38,10 @@ def GaussianEliminationWPivot(A):
     return x #returns x values Ie sols to matrix eq.
 
 #%%
-A = np.random.uniform(0,10, size = (100,100))
-B = np.random.uniform(0,10, size = (1,100))
+def random(i,N,valmin,valmax):
+    A = np.random.uniform(valmin, valmax, size = (N,N))
+    B = np.random.uniform(valmin, valmax, size = (1,N))
+    return A,B
 #%%
 def ToList(A,B):
     a=A.tolist()
@@ -50,11 +52,23 @@ def ToList(A,B):
         
     return a
 
+A,B = random(1,10,0,10)
 A_List=ToList(A,B)   
 sols = GaussianEliminationWPivot(A_List)
+check = abs(np.matmul(A,sols) - B)<1e-14
 print(np.matmul(A,sols))
-print(abs(np.matmul(A,sols) - B)<1e-12)
+print(check)
+#%% Check and measure of efficacy of function 
+#counter=0
+#for i in range(100):
+#    A,B = random(i)
+#    A_List=ToList(A,B)   
+#    sols = GaussianEliminationWPivot(A_List)
+#    check = abs(np.matmul(A,sols) - B)<1e-14
+#    if check.all()==True:
+#        counter = counter+1
+#    print(counter)
 #%%  Additional testing to fix accuracy. Runs into a bunch of problems for some reason
 #C = np.column_stack((A,B.T))
-#A_List = GaussianEliminationWPivot(C)   
+#A_List_2 = GaussianEliminationWPivot(C)   
 #sols = GaussianEliminationWPivot(A_List)
