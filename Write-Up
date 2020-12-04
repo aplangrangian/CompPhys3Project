@@ -308,7 +308,7 @@ The following is a 3D plot for $U(p,q)$:
 \label{f1}
 \centering
 \includegraphics[scale=0.6]{U(p,q).png}
-\caption{3D wireframe plot of U(p,q) where MTI is given in black and MTIII is given in purple}
+\caption{3D wireframe plot of U(p,q) where MT-I is given in black and MT-III is given in purple}
 \end{figure}
 
 \pagebreak
