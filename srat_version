@@ -1,76 +1,60 @@
 #imports
- import numpy as np
- from scipy.misc import derivative
- #%%
- A = np.random.randint(1,10+1,size = (3,3))
- B = np.random.randint(1,10+1, size = (1,3))
- #%%
- def GaussianElim(A,B):
-     A = np.insert(A,np.shape(A)[0],B,1)
-     for k in range(np.shape(A)[0]):
-         pivot(A,k)
-         for i in range(k+1,np.shape(A)[0]):
-             A[i] = [A[i][j] - A[k][j]/(A[k][k])*A[i][k] for j in range(np.shape(A)[0]+1)]
-     x1 = [0]*len(A)
-     summed=0
-     for k in range(np.shape(A)[0]-1, -1,-1):
-         for i in range(i,np.shape(A)[0]):
-             summed += A[k,i]*x1[i]
-             x1[k] = (A[k,np.shape(A)[0]]/(A[k,k])) - summed/((A[k,k]))
-     return x1
-
- #%% Pivoting function before Eqn 41 ish
- def pivot(A,k):
-     Amax = A[k][k]
-     for i in range(k+1,np.shape(A)[0]):
-         if A[i][k] > Amax:
-             A[[i,k],:] = A[[k,i],:]
- #%%
- ELIMINATED_A = GaussianElim(A,B)
- #%%
- x1 = np.zeros(np.shape(A)[0])
- #%%
- xN = ELIMINATED_A[np.shape(A)[0]-1,np.shape(ELIMINATED_A)[0]]/(ELIMINATED_A[np.shape(A)[0]-1,np.shape(A)[0]-1])
- #%%
- x1[-1] = xN
- #%%
- print(np.matmul(A,x1))
-             A[k],A[i] = A[i], A[k]
-
- #%% Gaussian Elim function
- def GaussianEliminationWPivot(A):
-     # Elimination Eqn 43 for general
-     n = np.shape(A)[0] # to make the length neater (N)
-     n1 = np.shape(A)[1] #width (N+1)  now we have N x N+1 matrix as in 42 or 40
-     for i in range(n):
-         pivot(A, i) #pivots for each set of cols 
-         for j in range(i+1, n): 
-             A[j] = [A[j][k] - A[i][k]*A[j][i]/A[i][i] for k in range(n1)] #elim
-
-     #backwards substitution 
-     x = [0]*np.shape(A)[0] #list of N zeros
-     for i in range(np.shape(A)[0]-1, -1, -1):
-         summed=0
-         for j in range(i, np.shape(A)[0]):
-             summed += A[i][j] * x[j]  #summing over each iteration
-             x[i] = (A[i][np.shape(A)[0]] - summed) / A[i][i] #eqn 37
-     return x #returns x values Ie sols to matrix eq.
- #%% Matrix Def
- A= [[8,2,8,10],[6,10,9,1],[6,4,5,1]] #needs to be dtype == list, sample matrix
- print(GaussianEliminationWPivot(A))
-
- #%% Testing
- testA = [[8,2,8],[6,10,9],[6,4,5]] 
- testB = GaussianEliminationWPivot(A)
-
- print(np.matmul(ELIMINATED_A[:,0:3],x1))
- print(np.matmul(testA,testB))
- 
- 
- 
- #%%
+import numpy as np
+from scipy.misc import derivative
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
+#%%
+def pivot(A,k):
+    Amax = A[k][k]
+    for i in range(k+1,np.shape(A)[0]):
+        dummy=0
+        if A[i][k]-Amax > 1e-16:
+            dummy = A[k]
+            Amax = A[i][k]
+            A[k],A[i] = A[i], dummy
 
 
+#%% Gaussian Elim function
+def GaussianEliminationWPivot(A):
+    # Elimination Eqn 43 for general
+    n = np.shape(A)[0] # to make the length neater (N)
+    n1 = np.shape(A)[1] #width (N+1)  now we have N x N+1 matrix as in 42 or 40
+    for i in range(n):
+        pivot(A, i) #pivots for each set of cols 
+        for j in range(i+1, n): 
+            A[j] = [A[j][k] - A[i][k]*A[j][i]/A[i][i] for k in range(n1)] #elim
+            
+    #backwards substitution 
+    x = [0]*np.shape(A)[0] #list of N zeros
+    for i in range(np.shape(A)[0]-1, -1, -1):
+        summed=0
+        for j in range(i, np.shape(A)[0]):
+            summed += A[i][j] * x[j]  #summing over each iteration
+            x[i] = (A[i][np.shape(A)[0]] - summed) / A[i][i] #eqn 37
+    return x #returns x values Ie sols to matrix eq.
+
+#%%
+def random(i,N,valmin,valmax):
+    A = np.random.uniform(valmin, valmax, size = (N,N))
+    B = np.random.uniform(valmin, valmax, size = (1,N))
+    return A,B
+#%%
+def ToList(A,B):
+    a=A.tolist()
+    b=list(B)
+    n=len(a)
+    for i in range(0,n):
+        a[i].append(b[0][i])
+        
+    return a
+
+A,B = random(1,10,0,10)
+A_List=ToList(A,B)   
+sols = GaussianEliminationWPivot(A_List)
+check = abs(np.matmul(A,sols) - B)<1e-14
+print(np.matmul(A,sols))
+print(check)
+#%%
 #Functions
 def func(q):
     return (1+q)**(-2)
@@ -78,36 +62,30 @@ def func(q):
 def qfunc(x):
     return (1+x)/(1-x)
 
+def dq(x):
+    return 2/((1-x)**2)
+
 def mesh(Mesh_Size):
     X = np.polynomial.legendre.leggauss(Mesh_Size)
     return X
 
-def updatedmesh(Mesh_Size):
-    mesh=mesh(Mesh_Size)
-    mesh[1]=2*mesh[1]/(1-mesh[0])^2
-    return mesh
+def updatedmesh(N):
+    q=np.zeros(N)
+    w=np.zeros(N)
+    for i in range(N):
+        q[i]=2*(1+mesh(N)[0][i])/(1-mesh(N)[0][i])
+        w[i]=2*2*mesh(N)[1][i]/(1-mesh(N)[0][i])**2
+    return q,w #same for position and momentum
 
-def GaussInteg(X,N,K):
+def GaussInteg(fn,N):
+    x=updatedmesh(N)[0]
+    w=updatedmesh(N)[1]
     sum=0
     for j in range(0,N):
-        q=qfunc(X[j])
-        sum+= K[j]*func(q)*derivative(qfunc,X[j], dx=1e-6)
-        print(sum)
+        q=qfunc(x[j])
+        sum+= w[j]*func(q)*derivative(qfunc(x),x[j], dx=1e-6)
     return sum
-
-#Variables
-N=100
-F=np.zeros((N,1))
-
-#Body of Code    
-Mesh_asbsesca = updatedmesh(N)[0]
-Mesh_weights = updatedmesh(N)[1]
-
-F=GaussInteg(Mesh_asbsesca,N,Mesh_weights)
-
-
 #%%
-
 def Vi(r,i):
     Vr=1438.72
     mur=3.11
@@ -120,28 +98,155 @@ def Vi(r,i):
     V=2/np.pi*1/conversion*(Vr*np.exp(-mur*r)/r-Va*np.exp(-mua*r)/r)
     return V
 
+N=100
+
+Viarray=[]
+Viiiarray=[]
+rarray=[]
+ri=0.1
+rf=4
+step=(rf-ri)/N
+for r in np.arange(ri,rf,step):
+    rarray=np.append(rarray,r)
+    Viarray=np.append(Viarray,Vi(r,1))
+    Viiiarray=np.append(Viiiarray,Vi(r,3))
+    
+plt.plot(rarray,Viarray)
+plt.ylim((-2,5))
+plt.plot(rarray,Viiiarray)
 #%%
 
-def U(N,n):#n to indicate I or III
+def U_func(N,n):#n to indicate I or III
     U=np.zeros((N,N))
-    mesh=updatedmesh(N)
-    w=mesh[1]
-    q=mesh[0]
-    r=mesh[0]
-    for i,j in zip(range(N),range(N)):
-        if q[i]!=0 and q[j]!=0:
-            sum=0
-            for l in range(N):
-                sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(q[j]*r[l])/q[j]
-            U[i,j]=sum
-        if q[i]==0 or q[j]==0:
-            sum=0
-            for l in range(N):
-                sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
-            U[i,j]=sum  
-        if q[i]==0 and q[j]==0:
-            sum=0
-            for l in range(N):
-                sum+=w[l]*r[l]^2*Vi(r[l],n)
-            U[i,j]=sum
+    w=updatedmesh(N)[1]
+    q=updatedmesh(N)[0]
+    r=updatedmesh(N)[0]
+    for i in range(N):
+        for j in range(N):
+            if q[i]!=0 and q[j]!=0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(q[j]*r[l])/q[j]
+                U[i,j]=sum
+            if q[i]==0 or q[j]==0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
+                U[i,j]=sum  
+            if q[i]==0 and q[j]==0:
+                sum=0
+                for l in range(N):
+                    sum+=w[l]*r[l]^2*Vi(r[l],n)
+                U[i,j]=sum
     return U
+ui=U_func(N,1)
+uiii=U_func(N,3)
+
+p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
+q=updatedmesh(N)[0][0:70]
+P,Q = np.meshgrid(p,q)
+
+fig=plt.figure()
+ax=plt.axes(projection='3d')
+ax.plot_wireframe(P,Q,ui[0:70,0:70],color='green')
+ax.plot_wireframe(P,Q,uiii[0:70,0:70],color='red')
+
+plt.show()
+
+#%%
+#now need to make Ui^(k)
+def Uk_func(N,n,k):
+    Uk=np.zeros(N)
+    w=updatedmesh(N)[1]
+    q=updatedmesh(N)[0]
+    r=updatedmesh(N)[0]
+    for i in range(N):
+        sum=0
+        for l in range(N):
+            sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(k*r[l])/k
+        Uk[i]=sum
+    return Uk
+
+#need U^(kk) as well
+def Ukk_func(N,n,k):
+    w=updatedmesh(N)[1]
+    r=updatedmesh(N)[0]
+    sum=0
+    for l in range(N):
+        sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l])*np.sin(k*r[l])/k
+    Ukk=sum
+    return Ukk
+
+#defining K
+def K_func(N,n,k):
+    K=np.zeros((N,N))
+    w=updatedmesh(N)[1]
+    q=updatedmesh(N)[0]
+    U=U_func(N,n)
+    Uk=Uk_func(N,n,k)
+    for i in range(N):
+        for j in range (N):
+            K[i,j]=w[j]*q[j]**2*(U[i,j]-Uk[i])/(k**2-q[j]**2)
+    return K
+
+#W vector
+def Wk_func(N,n,k):
+    K=K_func(N,n,k)
+    Uk=Uk_func(N,n,k)
+    identity=np.zeros((N,N))
+    for i in range(N):
+        identity[i,i]=1
+    A=identity-K
+    A_aug= np.insert(A,np.shape(A)[0],Uk,1)
+    A_aug_list=A_aug.to_list
+    Wk=GaussianEliminationWPivot(A_aug_list)
+    return Wk
+
+#Wkk value
+def Wkk_func(N,n,k):
+    Uk=Uk_func(N,n,k)
+    Ukk=Ukk_func(N,n,k)
+    Wk=Wk_func(N,n,k)
+    w=updatedmesh(N)[1]
+    q=updatedmesh(N)[0]
+    sum=0
+    for j in range(N):
+        sum+=w[j]*(q[j])**2*(Uk[j]-Ukk)/(k**2-(q[j])**2)*Wk[j]
+    Wkk=Ukk+sum
+    return Wkk
+
+#Real and Imaginary comps of Jost fn
+
+def Re_F_func(N,n,k):
+    Wk=Wk_func(N,n,k)
+    Wkk=Wkk_func(N,n,k)
+    w=updatedmesh(N)[1]
+    q=updatedmesh(N)[0]
+    sum=0
+    for i in range(N):
+        sum+=w[i]*((q[i])**2*Wk[i]-k**2*Wkk)/(k**2-(q[i])**2)
+    RF=1-sum
+    return RF
+
+def Im_F_func(N,n,k):
+    Wkk=Wkk_func(N,n,k)
+    IF=np.pi/2*k*Wkk
+    return IF
+
+def phase_shift_func(N,n,k):
+    ImF=Im_F_func(N,n,k)
+    ReF=Re_F_func(N,n,k)
+    ratio=ImF/ReF
+    phase_shift=np.arctan(-ratio)*180*np.pi #convert to degrees
+    return phase_shift
+
+#scattering length
+def scat_length_func(N,n):
+    W0=Wk_func(N,n,0)
+    W00=Wkk_func(N,n,0)
+    w=updatedmesh(N)[1]
+    sum=0
+    for i in range(N):
+        sum+=w[i]*W0[i]
+    a=np.pi/2*W00/(1+sum)
+    return a
