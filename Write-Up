@@ -64,7 +64,8 @@ This process was accomplished in our code in the following manner for an $N \tim
 
 def pivot(A,k):
 	Define Amax to be first diagonal term A[k,k]
-	if  any other element in same col > Amax, for all elements in col
+	if  any other element in same col > Amax, 
+	   for all elements in col
 		Amax = larger element
 		
 def GaussianEliminationWPivot(A):
@@ -78,14 +79,17 @@ def GaussianEliminationWPivot(A):
 	for i in range(N):
 		sum=0
 		for j in range(N):
-			EQ. 37 from write-up. Sum value is changed in this procedure.
+			EQ. 37 from write-up. 
+			Sum value is changed in this procedure.
 	#Returns solutions to matrix equation
 	return x
 
 def random(i,N,valmin,valmax):
     Define N number of 2 random matrices for testing.
-    A = random generated number of a NxN between min value and max value
-    B = random generated number of a 1xN between min value and max value
+    A = random generated number of a NxN between min value and 
+       max value
+    B = random generated number of a 1xN between min value and 
+       max value
     return A,B
 
 
@@ -100,7 +104,8 @@ def ToList(A,B):
 A,B = random(1,10,0,10) 
 A_List=ToList(A,B)   
 sols = GaussianEliminationWPivot(A_List)
-check = abs(np.matmul(A,sols) - B)< Some Margin of Error (1e-14 ~50%)
+check = abs(np.matmul(A,sols) - B)< Some Margin of 
+   Error (1e-14 ~50%)
 print(np.matmul(A,sols))
 print(check)	
 
@@ -163,6 +168,37 @@ Integral=GaussInteg(asbsesca,N,weights)
 \exercise
 
 Next, the potential matrix elements $U(p,q)$ were generated for a given mesh. 
+
+More description of equations needed here
+
+\begin{lstlisting}[language=Python]
+
+#Define functions
+
+def Mesh(mesh_size):
+	return mesh asbsesca and weight for a given mesh size
+
+def UpdatedMesh(mesh_size):
+	q,w=Nx1 empty matrix
+	for i in range(N):
+		q=(1+asbsesca)/(1-asbsesca)
+		w=2*weight/(1-weight)**2
+	return q and w
+
+def Vi(r,i):
+	#this is defined according to eq. (15) in the write up
+	Assign values for Vr, mu_r, mu_a, conversion
+	if (i=1):
+		Assign Va for MTI model
+	if (i=3):
+		Assign Va for MTIII model
+	Use variables to define V(r)
+	return V
+	
+def U(N,n):
+
+
+\end{lstlisting}
 
 \pagebreak
 
