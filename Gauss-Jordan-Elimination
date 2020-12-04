@@ -58,25 +58,3 @@ print(abs(np.matmul(A,sols) - B)<1e-12)
 #C = np.column_stack((A,B.T))
 #A_List = GaussianEliminationWPivot(C)   
 #sols = GaussianEliminationWPivot(A_List)
-
-
-
-#%%
-#print(GaussianEliminationWPivot(A_List))
-#
-##%% Testing
-#testA = A_List 
-#testB = GaussianEliminationWPivot(A_List)
-#
-#print(np.matmul(A,testB))
-##%%
-#
-#
-#A= [[8,2,3,10],[6,10,3,1],[6,4,5,1]] #needs to be dtype == list, sample matrix
-#print(GaussianEliminationWPivot(A))		 #%%
-##%% Testing		 #%% Testing
-#testA = [[8,2,3],[6,10,3],[6,4,5]] 		 
-#testB = GaussianEliminationWPivot(A)		 
-#
-# 
-#print(np.matmul(testA,testB))
