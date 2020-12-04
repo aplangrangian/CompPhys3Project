@@ -69,19 +69,38 @@ def GaussianEliminationWPivot(A):
 	#Elimination
 	for i in range(N):
 	    Recall function pivot(A,i)
-	    Generalized Elimination Procedure for each element in each column
+	    Elimination for each element in each column
 			Eq. 43 from writeup
-	#Backwards substitution
-	#First, a list of N zeros
-	x=NxN empty matrix
-	#"For" loop that does stuff
+	x=Nx1 empty matrix
+	#Backward Substitution method
 	for i in range(N):
 		sum=0
 		for j in range(N):
-			EQ. 37 from write-up
+			EQ. 37 from write-up. Sum value is changed in this procedure.
 	#Returns solutions to matrix equation
 	return x
-	
+
+def random(i,N,valmin,valmax):
+    Define N number of 2 random matrices for testing.
+    A = random generated number of a NxN between min value and max value
+    B = random generated number of a 1xN between min value and max value
+    return A,B
+
+
+def ToList(A,B):
+    Convert A to list (dtype required)
+    Convert B to list
+    Append B to A as new col
+        
+    return A
+
+#Check by matrix multiplication
+A,B = random(1,10,0,10) 
+A_List=ToList(A,B)   
+sols = GaussianEliminationWPivot(A_List)
+check = abs(np.matmul(A,sols) - B)< Some Margin of Error (1e-14 ~50%)
+print(np.matmul(A,sols))
+print(check)	
 
 \end{lstlisting}
 
