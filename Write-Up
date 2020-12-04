@@ -169,7 +169,43 @@ Integral=GaussInteg(asbsesca,N,weights)
 
 Next, the potential matrix elements $U(p,q)$ were generated for a given mesh. 
 
-More description of equations needed here
+Given the potential:
+\begin{equation}
+    V(r)=V_{R} \frac{\mathrm{e}^{-\mu_{R} r}}{r}-V_{A} \frac{\mathrm{e}^{-\mu_{A} r}}{r}
+\end{equation}
+With the following chart and appropriate unit conversions:
+\begin{equation}
+    \begin{array}{|c||c|r|r|r|}
+\hline \begin{array}{c}
+\text { MT } \\
+\text { model }
+\end{array} & \begin{array}{c}
+V_{R} \\
+(\mathrm{MeV} \mathrm{fm})
+\end{array} & \begin{array}{c}
+\mu_{R} \\
+\left(\mathrm{fm}^{-1}\right)
+\end{array} & \begin{array}{c}
+V_{A} \\
+(\mathrm{MeV} \mathrm{fm})
+\end{array} & \begin{array}{c}
+\mu_{A} \\
+\left(\mathrm{fm}^{-1}\right)
+\end{array} \\
+\hline \mathrm{I} & 1438.720 & 3.110 & 513.968 & 1.550 \\
+\mathrm{III} & 1438.720 & 3.110 & 626.885 & 1.550 \\
+\hline
+\end{array}
+\end{equation}
+To construct the U matrix, using equations 3 and 4 from the write-up:
+\begin{equation}
+    U(p, q)=\frac{2}{\pi p q} \int_{0}^{\infty} d r \sin (p r)[m V(r)] \sin (q r)
+\end{equation}
+and 
+\begin{equation}
+    U(p, 0)=U(0, p)=\frac{2}{\pi p} \int_{0}^{\infty} d r r[m V(r)] \sin (p r) \quad \text { and } \quad U(0,0)=\frac{2}{\pi} \int_{0}^{\infty} d r r^{2}[m V(r)]
+\end{equation}
+A U matrix can be populated using the following pseudocode:
 
 \begin{lstlisting}[language=Python]
 
