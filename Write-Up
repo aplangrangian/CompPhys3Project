@@ -543,12 +543,13 @@ Looking now to solve the bound-state for MT-III, we plot our Jost-like function 
 
 Now with this energy, we plot our bound wavefunction, as shown in Figure 5.
 
-%\begin{figure}[h]
-%\label{f5}
-%\centering
-%\includegraphics[scale=0.6]{wavefunction.pdf}
-%\caption{Plot of the bound-state wave-function for MT-III.}
-%\end{figure}
+\begin{figure}[h]
+\label{f5}
+\centering
+\includegraphics[scale=0.6]{wavefunction.pdf}
+\caption{Plot of the bound-state wave-function for MT-III.}
+\end{figure}
 
-Let's note here that these results for the Jost function, bound-state energy, and thus the bound-state wave-function are not correct. Something in our Jost function is wrong, and we have been unable to find the source of this error. 
+While our Jost function and bound-state energy do not perfectly match the expected results, we are able to recognize the expected general form within our Jost and wave-function plots.
+
 \end{document}
