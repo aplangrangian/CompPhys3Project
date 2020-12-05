@@ -160,21 +160,34 @@ def Uk_func(N,n,k):
     w=updatedmesh(N)[1]
     q=updatedmesh(N)[0]
     r=updatedmesh(N)[0]
-    for i in range(N):
+    if (k==0):
         sum=0
-        for l in range(N):
-            sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(k*r[l])/k
-        Uk[i]=sum
+        for i in range(N):
+            for l in range(N):
+                sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
+            Uk[i]=sum
+    else:
+        for i in range(N):
+            sum=0
+            for l in range(N):
+                sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(k*r[l])/k
+            Uk[i]=sum
     return Uk
-
+    
 #need U^(kk) as well
 def Ukk_func(N,n,k):
     w=updatedmesh(N)[1]
     r=updatedmesh(N)[0]
-    sum=0
-    for l in range(N):
-        sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l],n)*np.sin(k*r[l])/k
-    Ukk=sum
+    if (k==0):
+        sum=0  
+        for l in range(N):
+            sum+=w[l]*(r[l])**2*Vi(r[l],n)
+        Ukk=sum
+    else: 
+        sum=0
+        for l in range(N):
+            sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l],n)*np.sin(k*r[l])/k
+        Ukk=sum
     return Ukk
 
 #defining K
@@ -185,9 +198,7 @@ def K_func(N,n,k):
     Uk=Uk_func(N,n,k)
     for i in range(100):
         for j in range (100):
-            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)
-            print(U[i,j],Uk[i],k**2,q[j]**2)
-            print(K[i,j])  
+            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)  
     return K
 
 #W vector
@@ -240,7 +251,7 @@ def phase_shift_func(N,n,k):
     ratio=ImF/ReF
     phase_shift=np.arctan(-ratio)*180*np.pi #convert to degrees
     return phase_shift
-
+#%%
 #scattering length
 def scat_length_func(N,n):
     W0=Wk_func(N,n,0)
@@ -249,7 +260,8 @@ def scat_length_func(N,n):
     sum=0
     for i in range(N):
         sum+=w[i]*W0[i]
-    a=np.pi/2*W00/(1+sum)
+    a=(np.pi/2)*W00/(1+sum)
+    print(sum,W00)
     return a
 #%%
 #testing these functions
@@ -258,18 +270,31 @@ k=0.77643#fm^-1
 
 Uki=Uk_func(N,1,k)[0:70]
 Ukiii=Uk_func(N,3,k)[0:70]
-
+#%%
 Ukki=Ukk_func(N,1,k)
 Ukkiii=Ukk_func(N,3,k)
-
+#%%
 Ki=K_func(N,1,k)[0:70,0:70]
 Kiii=K_func(N,3,k)[0:70,0:70]
-
+#%%
 Wki=Wk_func(N,1,k)[0:70]
 Wkiii=Wk_func(N,3,k)[0:70]
-
-
-
+#%%
+Wkki=Wkk_func(N,1,k)
+Wkkiii=Wkk_func(N,3,k)
+#%%
+Re_Fi=Re_F_func(N,1,k)
+Re_Fiii=Re_F_func(N,3,k)
+#%%
+W0i=Wk_func(N,1,0)
+#%%
+W00i=Wkk_func(N,1,0)
+#%%
+phase_shifti=phase_shift_func(N,1,k)
+phase_shiftiii=phase_shift_func(N,3,k)
+#%%
+scat_lengthi=scat_length_func(N,1)
+scat_lengthiii=scat_length_func(N,3)
 #%%
 p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
 q=updatedmesh(N)[0][0:70]
@@ -284,5 +309,3 @@ ax.plot_surface(P,Q,Ki,color='green')
 ax.plot_surface(P,Q,Kiii,color='red')
    
 plt.show()
-#%%
-#still testing
