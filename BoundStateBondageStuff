@@ -1,24 +1,26 @@
 #%% For Jost function
+N = 100
 u0iii=Uk_func(N,3,0)
-u0i=Uk_func(N,1,0)
-#%%
+#u0i=Uk_func(N,1,0)
+alpha = -.75/41.47
 def K_func_alpha(N,n,alpha):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
     w = updatedmesh(N)[1]
     U=U_func(N,n)
+    U0=Uk_func(N,n,0)
     for i in range(N):
         for j in range (N):
-            K[i,j]=(w[j]*q[j]**2)*(U[i,j]-U[i,0])/(alpha-q[j]**2)
-            #K[i,j]=(U[i,j]-U[i,0])/(alpha-q[j]**2)
+            K[i,j]=(w[j]*q[j]**2)*(U[i,j]-U0[i])/(-alpha-q[j]**2)
     return K
-#%%
-kijalpha3 = K_func_alpha(N,3,-2.231/41.47)
+
+kijalpha3 = K_func_alpha(N,3,alpha)
 #kijalpha1 = K_func_alpha(N,1,-2.231/41.47)
-#%%
+
 #W vector
-def Wk_func_alpha(N,n,k):
-    K=K_func_alpha(N,n,k)
+def Wk_func_alpha(N,n,alpha):
+    #K=K_func_alpha(N,n,k)
+    K = kijalpha3
     if n == 1:
         U0=u0i
     else:
@@ -31,19 +33,19 @@ def Wk_func_alpha(N,n,k):
     A_aug_list=A_aug.tolist()
     Wk=GaussianEliminationWPivot(A_aug_list)
     return Wk
-#%%
-Walpha3 = Wk_func_alpha(N,3,-2.231/41.47)
+
+Walpha3 = Wk_func_alpha(N,3,alpha)
 #Walpha1 = Wk_func_alpha(100,1,-2.231/41.47)
-#%%
-def FUCKUJOST(N,n,k):
+
+def FUCKUJOST(N,n,alpha):
     sum = 0
     q=updatedmesh(N)[0]
     w=updatedmesh(N)[1]
     for i in range(N):
-        sum+= (w[i]*q[i]**2)*Walpha3[i]/(-k + q[i]**2)
+        sum+= (w[i]*q[i]**2)*Walpha3[i]/(-alpha +q[i]**2)
         #sum+= Walpha3[i]/(-k + q[i]**2)
-    JostReal = 1 + sum
+    JostReal = -(1+ sum)
     return JostReal
 
-#%%
-JostReal = FUCKUJOST(N,3,-2.231/41.47)
+JostReal = FUCKUJOST(N,3,alpha)
+print(JostReal)
