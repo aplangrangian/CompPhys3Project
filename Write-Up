@@ -524,4 +524,31 @@ def phi_i_func(N,n,k,i):
 
 \end{lstlisting}
 
+For the scattering case, we plot the phase shift against energy, yielding the plot in Figure 3.
+\begin{figure}[h]
+\label{f3}
+\centering
+\includegraphics[scale=0.6]{fuckoff.png}
+\caption{Plot of the phase shift (in degrees) for MT-I and MT-III against the energy in MeV}
+\end{figure}
+
+Looking now to solve the bound-state for MT-III, we plot our Jost-like function against energy in Figure 4. With this, we are able to find our bound-state energy from the root of the function. Our result is -1.8 MeV. 
+
+\begin{figure}[h]
+\label{f4}
+\centering
+\includegraphics[scale=0.6]{Bound State found for MT III.pdf}
+\caption{Plot of the Jost-like F function for MT-III. The root of this plot indicates the bound-state energy level, which we find to be -1.8 MeV.}
+\end{figure}
+
+Now with this energy, we plot our bound wavefunction, as shown in Figure 5.
+
+%\begin{figure}[h]
+%\label{f5}
+%\centering
+%\includegraphics[scale=0.6]{wavefunction.pdf}
+%\caption{Plot of the bound-state wave-function for MT-III.}
+%\end{figure}
+
+Let's note here that these results for the Jost function, bound-state energy, and thus the bound-state wave-function are not correct. Something in our Jost function is wrong, and we have been unable to find the source of this error. 
 \end{document}
