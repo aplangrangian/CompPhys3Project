@@ -345,3 +345,21 @@ def FUCKUJOST(N,n,k):
     JostReal = 1 + sum
     return JostReal
 JostReal = FUCKUJOST(100,3,-2.231/41.47)
+
+
+#%%
+
+def C_norm(N,n,k):
+    q=updatedmesh(N)[0]
+    w=updatedmesh(N)[1]
+    sum=0
+    for i in range(N):
+       sum+=w[i]*q[i]**2*(Wk_func_alpha(N,n,k)/(-k+q[i]**2))**2
+    C=np.sqrt(1/sum)
+    return C
+
+def phi_i_func(N,n,k,i):
+    q=updatedmesh(N)[0]
+    phi=-C_norm(N,n,k)*Wk_func_alpha(N,n,k)/(-k+q[i]**2)
+    return phi
+    
