@@ -1,19 +1,26 @@
-u0iii=Uk_func_scat(N,3,0)
+#%% For Jost function
+u0iii=Uk_func(N,3,0)
+u0i=Uk_func(N,1,0)
+#%%
 def K_func_alpha(N,n,alpha):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
+    w = updatedmesh(N)[1]
     U=U_func(N,n)
     for i in range(N):
         for j in range (N):
-            K[i,j]=(U[i,j]-U[i,0])/(alpha-q[j]**2)
+            K[i,j]=(w[i]*q[i]**2)*(U[i,j]-U[i,0])/(alpha-q[j]**2)
     return K
-kijalpha3 = K_func_alpha(100,3,-2.231/41.47)
-kijalpha1 = K_func_alpha(100,1,-2.231/41.47)
+kijalpha3 = K_func_alpha(N,3,-2.231/41.47)
+kijalpha1 = K_func_alpha(N,1,-2.231/41.47)
 #%%
 #W vector
 def Wk_func_alpha(N,n,k):
     K=K_func_alpha(N,n,k)
-    U0=u0iii
+    if n == 1:
+        U0=u0i
+    else:
+        U0 = u0iii
     identity=np.zeros((N,N))
     for i in range(N):
         identity[i,i]=1
@@ -23,8 +30,8 @@ def Wk_func_alpha(N,n,k):
     Wk=GaussianEliminationWPivot(A_aug_list)
     return Wk
 #%%
-Walpha3 = Wk_func_alpha(100,3,-2.231/41.47)
-Walpha1 = Wk_func_alpha(100,1,-2.231/41.47)
+Walpha3 = Wk_func_alpha(N,3,-2.231/41.47)
+#Walpha1 = Wk_func_alpha(100,1,-2.231/41.47)
 #%%
 def FUCKUJOST(N,n,k):
     sum = 0
@@ -34,4 +41,4 @@ def FUCKUJOST(N,n,k):
         sum+= (w[i]*q[i]**2)*Walpha3[i]/(-k + q[i]**2)
     JostReal = 1 + sum
     return JostReal
-JostReal = FUCKUJOST(100,3,-2.231/41.47)
+JostReal = FUCKUJOST(N,3,-2.231/41.47)
