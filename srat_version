@@ -194,11 +194,12 @@ def Ukk_func(N,n,k):
 def K_func(N,n,k):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
+    w=updatedmesh(N)[0]
     U=U_func(N,n)
     Uk=Uk_func(N,n,k)
-    for i in range(100):
-        for j in range (100):
-            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)  
+    for i in range(N):
+        for j in range (N):
+            K[i,j]=w[j]*(q[j])**2*(U[i,j]-Uk[i])/(k**2-q[j]**2)  
     return K
 
 #W vector
@@ -265,7 +266,7 @@ def scat_length_func(N,n):
     return a
 #%%
 #testing these functions
-N=100
+N=50
 k=0.77643#fm^-1
 
 Uki=Uk_func(N,1,k)[0:70]
@@ -291,9 +292,11 @@ W0i=Wk_func(N,1,0)
 W00i=Wkk_func(N,1,0)
 #%%
 phase_shifti=phase_shift_func(N,1,k)
+#%%
 phase_shiftiii=phase_shift_func(N,3,k)
 #%%
 scat_lengthi=scat_length_func(N,1)
+#%%
 scat_lengthiii=scat_length_func(N,3)
 #%%
 p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
@@ -309,3 +312,4 @@ ax.plot_surface(P,Q,Ki,color='green')
 ax.plot_surface(P,Q,Kiii,color='red')
    
 plt.show()
+#%%
