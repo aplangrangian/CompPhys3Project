@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Dec  4 19:58:41 2020
-
 @author: alexlange
 """
 
@@ -149,21 +148,24 @@ def U_func(N,n):#n to indicate I or III
     return U
 ui=U_func(N,1)
 uiii=U_func(N,3)
-
+#%%
 p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
 q=updatedmesh(N)[0][0:70]
 P,Q = np.meshgrid(p,q)
-
+#%%
 fig=plt.figure()
 ax=plt.axes(projection='3d')
-ax.plot_wireframe(P,Q,ui[0:70,0:70],color='green')
-ax.plot_wireframe(P,Q,uiii[0:70,0:70],color='red')
-
+ax.plot_wireframe(P,Q,ui[0:70,0:70],color='black')
+ax.plot_wireframe(P,Q,uiii[0:70,0:70],color='purple')
+ax.set_xlabel('p [$fm^{-1}$]')
+ax.set_ylabel('q [$fm^{-1}$]')
+ax.set_zlabel('U(p,q) [fm]')
+ax.set_title('U(p,q) for MT-I (black) and MT-III (purple)')
 plt.show()
 
 #%%
 #now need to make Ui^(k)
-def Uk_func_scat(N,n,k):
+def Uk_func(N,n,k):
     Uk=np.zeros(N)
     w=updatedmesh(N)[1]
     q=updatedmesh(N)[0]
@@ -183,7 +185,7 @@ def Uk_func_scat(N,n,k):
     return Uk
     
 #need U^(kk) as well
-def Ukk_func_scat(N,n,k):
+def Ukk_func(N,n,k):
     w=updatedmesh(N)[1]
     r=updatedmesh(N)[0]
     if (k==0):
@@ -199,120 +201,28 @@ def Ukk_func_scat(N,n,k):
     return Ukk
 
 #defining K
-def K_func_scat(N,n,k):
+def K_func(N,n,k):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
     w=updatedmesh(N)[1]
     U=U_func(N,n)
-    Uk=Uk_func_scat(N,n,k)
+    Uk=Uk_func(N,n,k)
     for i in range(N):
         for j in range (N):
             K[i,j]=w[j]*(q[j])**2*(U[i,j]-Uk[i])/(k**2-q[j]**2)  
     return K
 
-#W vector
-def Wk_func_scat(N,n,k):
-    K=K_func_scat(N,n,k)
-    Uk=Uk_func_scat(N,n,k)
-    identity=np.zeros((N,N))
-    for i in range(N):
-        identity[i,i]=1
-    A=identity-K
-    A_aug= np.insert(A,np.shape(A)[0],Uk,1)
-    A_aug_list=A_aug.tolist()
-    Wk=GaussianEliminationWPivot(A_aug_list)
-    return Wk
-
-#Wkk value
-def Wkk_func_scat(N,n,k):
-    Uk=Uk_func_scat(N,n,k)
-    Ukk=Ukk_func_scat(N,n,k)
-    Wk=Wk_func_scat(N,n,k)
-    w=updatedmesh(N)[1]
-    q=updatedmesh(N)[0]
-    sum=0
-    for j in range(N):
-        sum+=w[j]*(q[j])**2*(Uk[j]-Ukk)/(k**2-(q[j])**2)*Wk[j]
-    Wkk=Ukk+sum
-    return Wkk
-
-#%%
-#scattering length
-def scat_length_func(N,n):
-    W0=Wk_func_scat(N,n,0)
-    W00=Wkk_func_scat(N,n,0)
-    w=updatedmesh(N)[1]
-    sum=0
-    for i in range(N):
-        sum+=w[i]*W0[i]
-    a=(np.pi/2)*W00/(1+sum)
-    print(sum,W00)
-    return a
-#%%
-#testing these functions
-N=100
-k=0.77643#fm^-1
-
-Uki=Uk_func_scat(N,1,k)[0:70]
-Ukiii=Uk_func_scat(N,3,k)[0:70]
-#%%
-Ukki_scat=Ukk_func_scat(N,1,k)
-Ukkiii_scat=Ukk_func_scat(N,3,k)
-#%%
-Ki_scat=K_func_scat(N,1,k)[0:70,0:70]
-Kiii_scat=K_func_scat(N,3,k)[0:70,0:70]
-#%%
-Wki_scat=Wk_func_scat(N,1,k)[0:70]
-Wkiii_scat=Wk_func_scat(N,3,k)[0:70]
-#%%
-Wkki_scat=Wkk_func_scat(50,1,0)
-Wkkiii_scat=Wkk_func_scat(50,3,0)
-
-#%%
-W0i_scat=Wk_func_scat(50,1,0)
-W00i_scat=Wkk_func_scat(N,1,0)
-
-#%%
-scat_lengthi=scat_length_func(50,1)
-scat_lengthiii=scat_length_func(50,3)
-#%%
-#now need to make Ui^(k)
-def Uk_func(N,n,k):
-    Uk=np.zeros(N)
-    w=updatedmesh(N)[1]
-    q=updatedmesh(N)[0]
-    r=updatedmesh(N)[0]
-    for i in range(N):
-        sum=0
-        for l in range(N):
-            sum+=w[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)*np.sin(k*r[l])/k
-        Uk[i]=sum
-    return Uk
-
-#need U^(kk) as well
-def Ukk_func(N,n,k):
-    w=updatedmesh(N)[1]
-    r=updatedmesh(N)[0]
-    sum=0
-    for l in range(N):
-        sum+=w[l]*np.sin(k*r[l])/k*Vi(r[l],n)*np.sin(k*r[l])/k
-    Ukk=sum
-    return Ukk
-
-#defining K
-def K_func(N,n,k):
+def K_func_plot(N,n,k):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
     U=U_func(N,n)
     Uk=Uk_func(N,n,k)
     for i in range(N):
         for j in range (N):
-            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)
-            #print(U[i,j],Uk[i],k**2,q[j]**2)
-            #print(K[i,j])  
+            K[i,j]=(U[i,j]-Uk[i])/(k**2-q[j]**2)  
     return K
 
-#%%#W vector
+#W vector
 def Wk_func(N,n,k):
     K=K_func(N,n,k)
     Uk=Uk_func(N,n,k)
@@ -323,11 +233,8 @@ def Wk_func(N,n,k):
     A_aug= np.insert(A,np.shape(A)[0],Uk,1)
     A_aug_list=A_aug.tolist()
     Wk=GaussianEliminationWPivot(A_aug_list)
-#    A = A
-#    B = Uk
-#    return Wk, A,B
     return Wk
-#%%
+
 #Wkk value
 def Wkk_func(N,n,k):
     Uk=Uk_func(N,n,k)
@@ -340,7 +247,8 @@ def Wkk_func(N,n,k):
         sum+=w[j]*(q[j])**2*(Uk[j]-Ukk)/(k**2-(q[j])**2)*Wk[j]
     Wkk=Ukk+sum
     return Wkk
-#%% scattering length
+
+#scattering length
 def scat_length_func(N,n):
     W0=Wk_func(N,n,0)
     W00=Wkk_func(N,n,0)
@@ -348,52 +256,69 @@ def scat_length_func(N,n):
     sum=0
     for i in range(N):
         sum+=w[i]*W0[i]
-    a=np.pi/2*W00/(1+sum)
+    a=(np.pi/2)*W00/(1+sum)
+    print(sum,W00)
     return a
-
-
 #%%
 #testing these functions
 N=100
 k=0.77643#fm^-1
 
-Uki=Uk_func(N,1,k)[0:70]
-Ukiii=Uk_func(N,3,k)[0:70]
-
+Uki=Uk_func(N,1,k)
+Ukiii=Uk_func(N,3,k)
+#%%
 Ukki=Ukk_func(N,1,k)
 Ukkiii=Ukk_func(N,3,k)
-
-Ki=K_func(N,1,k)[0:70,0:70]
-Kiii=K_func(N,3,k)[0:70,0:70]
 #%%
-#Wki,A, B=Wk_func(N,1,k)[0:70]
-Wki = Wk_func(N,1,k)[0:70]
-Wkiii = Wk_func(N,3,k)[0:70]
+Ki_plot=K_func_plot(N,1,k)
+Kiii_plot=K_func_plot(N,3,k)
+#%%
+Ki=K_func_plot(N,1,k)
+Kiii=K_func_plot(N,3,k)
+#%%
+Wki=Wk_func(N,1,k)
+Wkiii=Wk_func(N,3,k)
+#%%
+Wkki=Wkk_func(N,1,k)
+Wkkiii=Wkk_func(N,3,k)
+
+#%%
+W0i=Wk_func(N,1,0)
+W00i=Wkk_func(N,1,0)
+#%%
+W0iii=Wk_func(N,1,0)
+W00iii=Wkk_func(N,1,0)
+#%%
+scat_lengthi=scat_length_func(N,1)
+scat_lengthiii=scat_length_func(N,3)
+#%%
 p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
 q=updatedmesh(N)[0][0:70]
 P,Q = np.meshgrid(p,q)
 
-print((k**2-q[0]**2))
-
 
 fig=plt.figure()
 ax=plt.subplot(111,projection='3d')
-ax.plot_surface(P,Q,Ki,color='green')
-ax.plot_surface(P,Q,Kiii,color='red')
-   
+ax.plot_wireframe(P,Q,Ki_plot[0:70,0:70],color='black')
+ax.plot_wireframe(P,Q,Kiii_plot[0:70,0:70],color='purple')
+ax.set_xlabel('p [$fm^{-1}$]')
+ax.set_ylabel('q [$fm^{-1}$]')
+ax.set_zlabel('K(p,q) [fm^3]')
+ax.set_title('K(p,q) for MT-I (black) and MT-III (purple) w/out $w q^2$ term at E = 25 MeV')
+ax.text2D(0.5, 0.3, "k = $\sqrt{E/41.47}$", transform=ax.transAxes)
 plt.show()
-#%% Bound state stuff
-u0iii=Uk_func(N,3,0)[0:70]
+#%%
+u0iii=Uk_func(N,3,0)
 def K_func_alpha(N,n,alpha):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
     U=U_func(N,n)
     for i in range(N):
         for j in range (N):
-            K[i,j]=(U[i,j]-U[i,0])/(-alpha**2-q[j]**2)
+            K[i,j]=(U[i,j]-U[i,0])/(alpha-q[j]**2)
     return K
-kijalpha3 = K_func_alpha(100,3,25j/41.47)
-kijalpha1 = K_func_alpha(100,1,25j/41.47)
+kijalpha3 = K_func_alpha(100,3,-2.231/41.47)
+kijalpha1 = K_func_alpha(100,1,-2.231/41.47)
 #%%
 #W vector
 def Wk_func_alpha(N,n,k):
@@ -407,3 +332,16 @@ def Wk_func_alpha(N,n,k):
     A_aug_list=A_aug.tolist()
     Wk=GaussianEliminationWPivot(A_aug_list)
     return Wk
+#%%
+Walpha3 = Wk_func_alpha(100,3,-2.231/41.47)
+Walpha1 = Wk_func_alpha(100,1,-2.231/41.47)
+#%%
+def FUCKUJOST(N,n,k):
+    sum = 0
+    q=updatedmesh(N)[0]
+    w=updatedmesh(N)[1]
+    for i in range(N):
+        sum+= (w[i]*q[i]**2)*Walpha3[i]/(-k + q[i]**2)
+    JostReal = 1 + sum
+    return JostReal
+JostReal = FUCKUJOST(100,3,-2.231/41.47)
