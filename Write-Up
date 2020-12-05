@@ -324,10 +324,58 @@ The following is a 3D plot for $K(p,q)$:
 \includegraphics[scale=0.6]{K(p,q).pdf}
 \caption{3D wireframe plot of K(p,q) where MT-I is given in black and MT-III is given in purple and E = 25MeV}
 \end{figure}
+
+For the scattering problem, $K^{(k)}_{ij}$ is given by the following:
+
+\begin{equation}
+\label{14}
+K^{(k)}_{ij} = w_{q_j} q_j^2 \frac{U_{ij} - U^{(k)}_i}{k^2-q^2_j}
+\end{equation}
+
+The integral equation $W(p,k)$ is given as a function of $K$ as individual components:
+
+\begin{equation}
+\label{15}
+W^{(k)}_i=U^{(k})_i + \sum^N_{j=1} K^{(k)}_{ij} W^{(k)}_j \ , \ i = 1, \cdots , N
+\end{equation}
+
+The results for the bound-state solution is slightly different:
+
+\begin{equation}
+\label{16}
+K^{(\alpha)}_{ij} = w_{q_j} q_j^2 \frac{U_{ij} - U^{(0)}_i}{- \alpha^2 - q_j^2} \ ; \ i,j=1, \cdots , N
+\end{equation}
+
+\begin{equation}
+\label{17}
+W^{(\alpha)}_i = U^{(0)}_i + \sum^N_{j=1} K^{(\alpha)}_{ij} W^{(\alpha)}_j \ , \ i=1, \cdots , N
+\end{equation}
+
+This result can be used to determine the Jost function. 
+
 \pagebreak
 
 \exercise
 
-Finally, the system of linear equations from part 4 was solved and the Jost function was calculated. 
+Finally, the system of linear equations from part 4 was solved and the Jost function was calculated. This function was of the following form for the scattering problem:
+
+\begin{equation}
+\label{18}
+\text{Re}F(k) = 1- \sum^N_{i=1} w_{q_i} \frac{q_i^2 W_i^{(k)} - k^2 W^{(kk)}}{k^2-q_i^2}
+\end{equation}
+
+\begin{equation}
+\label{19}
+\text{Im} F(k) = \frac{\pi}{2} k W^{(kk)}
+\end{equation}
+
+For the bound-state problem, the Jost function is the following:
+
+\begin{equation}
+\label{20}
+F(- \alpha ^2) = 1+\sum^N_{i=1} w_{q_i} q_i^2 \frac{W_i^{(\alpha)}}{\alpha^2+q_i^2}
+\end{equation}
+
+We consider the Jost function for energies between -0 MeV and -5 MeV with $- \alpha ^2= E/41.47$. 
 
 \end{document}
