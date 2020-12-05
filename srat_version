@@ -47,7 +47,7 @@ def ToList(A,B):
         a[i].append(b[0][i])
         
     return a
-
+#%%
 A,B = random(1,10,0,10)
 A_List=ToList(A,B)   
 sols = GaussianEliminationWPivot(A_List)
@@ -99,7 +99,7 @@ def Vi(r,i):
     return V
 
 N=100
-
+#%%
 Viarray=[]
 Viiiarray=[]
 rarray=[]
@@ -110,7 +110,7 @@ for r in np.arange(ri,rf,step):
     rarray=np.append(rarray,r)
     Viarray=np.append(Viarray,Vi(r,1))
     Viiiarray=np.append(Viiiarray,Vi(r,3))
-    
+#%%    
 plt.plot(rarray,Viarray)
 plt.ylim((-2,5))
 plt.plot(rarray,Viiiarray)
@@ -139,6 +139,7 @@ def U_func(N,n):#n to indicate I or III
                     sum+=w[l]*r[l]^2*Vi(r[l],n)
                 U[i,j]=sum
     return U
+#%%
 ui=U_func(N,1)
 uiii=U_func(N,3)
 
@@ -161,8 +162,8 @@ def Uk_func(N,n,k):
     q=updatedmesh(N)[0]
     r=updatedmesh(N)[0]
     if (k==0):
-        sum=0
         for i in range(N):
+            sum=0
             for l in range(N):
                 sum+=w[l]*r[l]*np.sin(q[i]*r[l])/q[i]*Vi(r[l],n)
             Uk[i]=sum
@@ -194,7 +195,7 @@ def Ukk_func(N,n,k):
 def K_func(N,n,k):
     K=np.zeros((N,N))
     q=updatedmesh(N)[0]
-    w=updatedmesh(N)[0]
+    w=updatedmesh(N)[1]
     U=U_func(N,n)
     Uk=Uk_func(N,n,k)
     for i in range(N):
@@ -227,9 +228,7 @@ def Wkk_func(N,n,k):
         sum+=w[j]*(q[j])**2*(Uk[j]-Ukk)/(k**2-(q[j])**2)*Wk[j]
     Wkk=Ukk+sum
     return Wkk
-
-#Real and Imaginary comps of Jost fn
-
+#%%
 def Re_F_func(N,n,k):
     Wk=Wk_func(N,n,k)
     Wkk=Wkk_func(N,n,k)
@@ -249,9 +248,11 @@ def Im_F_func(N,n,k):
 def phase_shift_func(N,n,k):
     ImF=Im_F_func(N,n,k)
     ReF=Re_F_func(N,n,k)
-    ratio=ImF/ReF
-    phase_shift=np.arctan(-ratio)*180*np.pi #convert to degrees
+    phase_shift=np.arctan2(-ImF,ReF)*180/np.pi #convert to degrees
+    if (phase_shift<=0):
+        phase_shift+=180
     return phase_shift
+
 #%%
 #scattering length
 def scat_length_func(N,n):
@@ -268,7 +269,7 @@ def scat_length_func(N,n):
 #testing these functions
 N=50
 k=0.77643#fm^-1
-
+#%%
 Uki=Uk_func(N,1,k)[0:70]
 Ukiii=Uk_func(N,3,k)[0:70]
 #%%
@@ -281,23 +282,19 @@ Kiii=K_func(N,3,k)[0:70,0:70]
 Wki=Wk_func(N,1,k)[0:70]
 Wkiii=Wk_func(N,3,k)[0:70]
 #%%
-Wkki=Wkk_func(N,1,k)
-Wkkiii=Wkk_func(N,3,k)
+Wkki=Wkk_func(50,1,0)
 #%%
-Re_Fi=Re_F_func(N,1,k)
-Re_Fiii=Re_F_func(N,3,k)
+Wkkiii=Wkk_func(50,3,0)
+
 #%%
-W0i=Wk_func(N,1,0)
+W0i=Wk_func(50,1,0)
 #%%
 W00i=Wkk_func(N,1,0)
+
 #%%
-phase_shifti=phase_shift_func(N,1,k)
+scat_lengthi=scat_length_func(50,1)
 #%%
-phase_shiftiii=phase_shift_func(N,3,k)
-#%%
-scat_lengthi=scat_length_func(N,1)
-#%%
-scat_lengthiii=scat_length_func(N,3)
+scat_lengthiii=scat_length_func(50,3)
 #%%
 p=updatedmesh(N)[0][0:70] #because the transformation to the meshgrid has these increase so quickly, want to cut out the later pts
 q=updatedmesh(N)[0][0:70]
@@ -313,3 +310,35 @@ ax.plot_surface(P,Q,Kiii,color='red')
    
 plt.show()
 #%%
+E_array=np.zeros(N)
+k_array=np.zeros(N)
+phase_array_i=np.zeros(N)
+phase_array_iii=np.zeros(N)
+#%%
+for i in range(N):
+    print(i)
+    E=2*i
+    k=np.sqrt(E/41.47)
+    phase_i=phase_shift_func(N,1,k)
+    print(i)
+    phase_iii=phase_shift_func(N,3,k)
+    E_array[i]=E
+    k_array[i]=k
+    phase_array_i[i]=phase_i
+    phase_array_iii[i]=phase_iii
+#np.savetxt('phasearrays.txt',{E_array,k_array,phase_array_i,phase_array_iii})
+#%%
+p_test=phase_shift_func(50,3,2)
+#%%
+plt.plot(E_array,phase_array_i,label='i')
+plt.plot(E_array,phase_array_iii,label='iii')
+plt.legend()
+#%%
+k=np.sqrt(5/41.47)
+phase_shiftiii=phase_shift_func(N,3,k)
+#%%
+rf=Re_F_func(N,1,k)
+If=Im_F_func(N,1,k)
+#%%
+fuck1=phase_array_i
+fuck2=phase_array_iii
