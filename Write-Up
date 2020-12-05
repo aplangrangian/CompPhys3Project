@@ -321,7 +321,7 @@ The following is a 3D plot for $K(p,q)$:
 \begin{figure}[h]
 \label{f1}
 \centering
-\includegraphics[scale=0.6]{K(p,q)1.pdf}
+\includegraphics[scale=0.6]{K(p,q).pdf}
 \caption{3D wireframe plot of K(p,q) where MT-I is given in black and MT-III is given in purple and E = 25MeV}
 \end{figure}
 \pagebreak
