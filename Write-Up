@@ -315,8 +315,7 @@ The following is a 3D plot for $U(p,q)$:
 
 \exercise
 
-In order to implement the Gauss-Jordan elimination in part 1, an augmented matrix needs to be generated. 
-The following is a 3D plot for $K(p,q)$:
+In order to implement the Gauss-Jordan elimination in part 1, an augmented matrix needs to be generated. The following is a 3D plot for $K(p,q)$:
 
 \begin{figure}[h]
 \label{f1}
@@ -339,19 +338,79 @@ The integral equation $W(p,k)$ is given as a function of $K$ as individual compo
 W^{(k)}_i=U^{(k})_i + \sum^N_{j=1} K^{(k)}_{ij} W^{(k)}_j \ , \ i = 1, \cdots , N
 \end{equation}
 
+\begin{equation}
+\label{16}
+W^{(kk)} = U^{(kk)} + \sum^N_{j=1} w_{q_j} q_j^2 \frac{U_j^{(k)} - U^{(kk)}}{k^2-q_j^2} W_j^{(k)}
+\end{equation}
+
 The results for the bound-state solution is slightly different:
 
 \begin{equation}
-\label{16}
+\label{17}
 K^{(\alpha)}_{ij} = w_{q_j} q_j^2 \frac{U_{ij} - U^{(0)}_i}{- \alpha^2 - q_j^2} \ ; \ i,j=1, \cdots , N
 \end{equation}
 
 \begin{equation}
-\label{17}
+\label{18}
 W^{(\alpha)}_i = U^{(0)}_i + \sum^N_{j=1} K^{(\alpha)}_{ij} W^{(\alpha)}_j \ , \ i=1, \cdots , N
 \end{equation}
 
-This result can be used to determine the Jost function. 
+This result can be used to determine the Jost function. The code used for this part calls on some previously defined functions:
+
+\begin{lstlisting}[language=Python]
+
+def Uk_func(N,n,k):
+	#Specific case of Uij
+	Uk=Nx1 empty matrix
+	w=w from updatedmesh
+	q,r=q from updatedmesh
+	#use "if" statement to prevent infinities
+	if k=0:
+		for i and l in range(N):
+			Uk= sum from eq.12 in write-up
+	else:
+		for i and l in range(N):
+			Uk= sum from eq.14 in write-up
+	return Uk
+		
+def Ukk_func(N,n,k):
+	#Another specific case of Uij
+	w=w from updatedmesh
+	r=q from updatedmesh
+	if k=0:
+		for i and l in range(N):
+			Uk= sum from eq.13 in write-up
+	else:
+		for i and l in range(N):
+			Uk= sum from eq.15 in write-up
+	return Uk
+	
+def K_func(N,n,k):
+	K=NxN empty matrix
+	w=w from updatedmesh
+	q=q from updatedmesh
+	for i and j in range(N):
+		Calc. individual components of K using eq.[14]
+	return K
+	
+def Wk_func(N,n,k):
+	#this is solved in a similar manner to eq.[15]
+	Define identity matrix
+	A=identity-K
+	A_aug=A appended with column vector Uk
+	Wk=GaussianEliminationWPivot(A_aug)
+	#calls on previous function for Gauss elimination
+	return Wk
+	
+def Wkk_func)N,n,k):
+	w=w from updatedmesh
+	q=q from updatedmesh
+	for j in range(N):
+		sum=solution to the sum in eq.[16]
+	Wkk=Ukk+sum
+	return Wkk
+
+\end{lstlisting}
 
 \pagebreak
 
@@ -360,22 +419,63 @@ This result can be used to determine the Jost function.
 Finally, the system of linear equations from part 4 was solved and the Jost function was calculated. This function was of the following form for the scattering problem:
 
 \begin{equation}
-\label{18}
+\label{19}
 \text{Re}F(k) = 1- \sum^N_{i=1} w_{q_i} \frac{q_i^2 W_i^{(k)} - k^2 W^{(kk)}}{k^2-q_i^2}
 \end{equation}
 
 \begin{equation}
-\label{19}
+\label{20}
 \text{Im} F(k) = \frac{\pi}{2} k W^{(kk)}
+\end{equation}
+
+The phase shift and scattering length are given by the following:
+
+\begin{equation}
+\label{21}
+\tan{\delta(k)} = - \frac{\text{Im}F(k)}{\text{Re}F(k)} \ , \ a = \frac{\pi}{2} \frac{W^{(00)}}{1+ \sum^N_{i=1} w_{q_i} W_i^{(0)}}
 \end{equation}
 
 For the bound-state problem, the Jost function is the following:
 
 \begin{equation}
-\label{20}
+\label{21}
 F(- \alpha ^2) = 1+\sum^N_{i=1} w_{q_i} q_i^2 \frac{W_i^{(\alpha)}}{\alpha^2+q_i^2}
 \end{equation}
 
-We consider the Jost function for energies between -0 MeV and -5 MeV with $- \alpha ^2= E/41.47$. 
+We consider the Jost function for energies between -0 MeV and -5 MeV with $- \alpha ^2= E/41.47$. The code for this section is as follows:
+
+\begin{lstlisting}[language=Python]
+
+def Re_F_func(N,n,k):
+	w=w from updatedmesh
+	q=q from updatedmesh
+	for in in range(N):
+		sum=solution to sum in eq.[19]
+	ReF=1-sum
+	return ReF
+	
+def Im_F_func(N,n,k):
+	ImF=solution to eq.[20]
+	return ImF
+
+def phase_shift_func(N,n,k):
+	phase_shift=arctan(-ImF/ReF)
+	return phase_shift
+	
+def scat_length_func(N,n):
+	for i in range(N):
+		sum=solution for sum in eq.[21]
+	a=solution to eq.[21] with sum
+	return a
+	
+def F_Jost_func(N,n,k):
+	w=w from updatedmesh
+	q=q from updatedmesh
+	for i in range(N):
+		sum=solution to sum in eq.[22]
+	F_Jost=1+sum
+	return F_Jost
+
+\end{lstlisting}
 
 \end{document}
