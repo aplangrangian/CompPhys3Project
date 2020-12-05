@@ -352,21 +352,26 @@ JostReal = FUCKUJOST(100,3,-2.231/41.47)
 alpha_B_squared = 1.8/41.47
 kforpsi = np.sqrt(alpha_B_squared)
 #%%
+somevar0 = Wk_func_alpha(N,3,kforpsi)
+#%%
 def C_norm(N,n,k):
     q=updatedmesh(N)[0]
     w=updatedmesh(N)[1]
     sum=0
     for i in range(N):
-       sum+=w[i]*q[i]**2*(Wk_func_alpha(N,n,k)/(alpha_B_squared+q[i]**2))**2
+       sum+=w[i]*q[i]**2*(somevar0/(alpha_B_squared+q[i]**2))**2
     C=np.sqrt(1/sum)
     return C
 
 #%%
 N = 100
+somevar1 = Wk_func_alpha(N,3,0)
+somevar2 = C_norm(N,3,kforpsi)
+#%%
 def phi_i_func(N,n,k):
-    phi = np.empty(N)
     q=updatedmesh(N)[0]
     for i in range(N):
-        phi[i]=-C_norm(N,3,kforpsi)*Wk_func_alpha(N,3,kforpsi)/(-kforpsi+q[i]**2)
+        phi= -somevar2*somevar1/(-kforpsi+q[i]**2)
     return phi
 phitilda = phi_i_func(N,3,kforpsi)
+plt.plot(phitilda)
