@@ -9,10 +9,12 @@ def K_func_alpha(N,n,alpha):
     U=U_func(N,n)
     for i in range(N):
         for j in range (N):
-            K[i,j]=(w[i]*q[i]**2)*(U[i,j]-U[i,0])/(alpha-q[j]**2)
+            K[i,j]=(w[j]*q[j]**2)*(U[i,j]-U[i,0])/(alpha-q[j]**2)
+            #K[i,j]=(U[i,j]-U[i,0])/(alpha-q[j]**2)
     return K
+#%%
 kijalpha3 = K_func_alpha(N,3,-2.231/41.47)
-kijalpha1 = K_func_alpha(N,1,-2.231/41.47)
+#kijalpha1 = K_func_alpha(N,1,-2.231/41.47)
 #%%
 #W vector
 def Wk_func_alpha(N,n,k):
@@ -39,6 +41,9 @@ def FUCKUJOST(N,n,k):
     w=updatedmesh(N)[1]
     for i in range(N):
         sum+= (w[i]*q[i]**2)*Walpha3[i]/(-k + q[i]**2)
+        #sum+= Walpha3[i]/(-k + q[i]**2)
     JostReal = 1 + sum
     return JostReal
+
+#%%
 JostReal = FUCKUJOST(N,3,-2.231/41.47)
