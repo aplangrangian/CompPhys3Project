@@ -435,11 +435,30 @@ The phase shift and scattering length are given by the following:
 \tan{\delta(k)} = - \frac{\text{Im}F(k)}{\text{Re}F(k)} \ , \ a = \frac{\pi}{2} \frac{W^{(00)}}{1+ \sum^N_{i=1} w_{q_i} W_i^{(0)}}
 \end{equation}
 
-For the bound-state problem, the Jost function is the following:
+For the bound-state problem, the functions are slightly different:
 
 \begin{equation}
-\label{21}
+\label{22}
+K_{ij}^{(\alpha)} = w_{q_j} q_{j}^2 \frac{U_{ij}-U_i^{(0)}}{-\alpha^2 - q_j^2} \ ; \ i,j=1, \cdots , N
+\end{equation}
+
+\begin{equation}
+\label{23}
+W^{(\alpha)}_i = U^{(0)}_i + \sum^N_{j=1} K^{(0)}_{ij} W^{(\alpha)}_j
+\end{equation}
+
+The Jost function is given by the following for the bound-state problem. 
+
+\begin{equation}
+\label{24}
 F(- \alpha ^2) = 1+\sum^N_{i=1} w_{q_i} q_i^2 \frac{W_i^{(\alpha)}}{\alpha^2+q_i^2}
+\end{equation}
+
+The momentum space wave function is given by the following:
+
+\begin{equation}
+\label{25}
+\tilde{\psi} (q_i) = -C \frac{W^{(\alpha_B}}{\alpha_B^2+q_i^2} \ , \ \frac{1}{C^2} = \sum^N_{i=1} w_{q_i} q_i^2 \left( \frac{W^{(\alpha)}_i}{\alpha_B^2 + q_i^2} \right) ^2
 \end{equation}
 
 We consider the Jost function for energies between -0 MeV and -5 MeV with $- \alpha ^2= E/41.47$. The code for this section is as follows:
@@ -468,13 +487,40 @@ def scat_length_func(N,n):
 	a=solution to eq.[21] with sum
 	return a
 	
+def K_func_alpha(N,n,k):
+	K=NxN empty matrix
+	q=q from updatedmesh
+	for i,j in range(N):
+		K[i,j] = solution eq.[22] for matrix elements
+	return K
+	
+def Wk_func_alpha(N,n,k):
+	identity=NxN identity matrix
+	A=identity-K
+	A_aug=A appended with column vector Uk_func(N,3,0)
+	Wk=GaussianEliminationWPivot(A_aug)
+	return Wk
+	
 def F_Jost_func(N,n,k):
 	w=w from updatedmesh
 	q=q from updatedmesh
 	for i in range(N):
-		sum=solution to sum in eq.[22]
+		sum=solution to sum in eq.[24]
 	F_Jost=1+sum
 	return F_Jost
+	
+def C_norm(N,n,k):
+	w=w from updatedmesh
+	q=q from updatedmesh
+	for i in range(N):
+		sum=solution to sum in eq.[25]
+	C=sqrt(1/sum)
+	return  C
+	
+def phi_i_func(N,n,k,i):
+	q=q from updatedmesh
+	phi= solution to eq.[25]
+	return phi
 
 \end{lstlisting}
 
