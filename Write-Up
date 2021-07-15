@@ -8,7 +8,7 @@
 \maketitle
 
 \exercise
-Fuck
+Fuck 2
 
 To perform Gauss-Jordan elimination with pivoting, we will consider an inhomogeneous system of $N$ linear equations, which can be represented in the following matrix form:
 
